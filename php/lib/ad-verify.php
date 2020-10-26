@@ -1,5 +1,5 @@
 <?php
-require_once("/etc/apache2/capstone-mysql/encrypted-config.php");
+require_once("/etc/apache2/capstone-mysql/Secrets.php");
 /**
  * verifies whether the user is logged in or not; if so, the login timer is reset
  *
@@ -26,26 +26,26 @@ function verifyActiveDirectoryLogin() {
 }
 
 /**
+ *
  * verifies whether the use is logged in *AND* is an administrator
  * this function can be used as drop in replacement for verifyActiveDirectoryLogin
  *
  * @see verifyActiveDirectoryLogin
  * @return bool true if an admin, false if not
  **/
-function isLoggedInAsAdmin() {
+function isLoggedInAsAdmin(\Secrets $secrets ) : bool {
     // start the session if not active
     if(session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
-
     // search the session for login data
     $isAdmin = false;
     if(empty($_SESSION["adUser"]["username"]) === false) {
         if((time() - $_SESSION["adUser"]["loginTime"]) < 600) {
+
             // see if the the user is an admin user
             $_SESSION["adUser"]["loginTime"] = time();
-            $config = readConfig("/etc/apache2/capstone-mysql/prework_signup.ini");
-            $admins = json_decode($config["admusers"]);
+            $admins = $secrets->getSecret("adminUsers");
             $isAdmin = in_array($_SESSION["adUser"]["username"], $admins);
         } else {
             $_SESSION["adUser"] = array();
