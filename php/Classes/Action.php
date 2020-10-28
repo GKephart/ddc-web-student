@@ -90,7 +90,7 @@ class Action implements \JsonSerializable {
      *
      * @return Uuid current value of action id
      **/
-    public function getActionId() : Uuid{
+    public function getActionId() : Uuid {
         return($this->actionId);
     }
 
