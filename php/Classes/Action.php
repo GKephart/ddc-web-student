@@ -327,7 +327,7 @@ class Action implements \JsonSerializable {
      * @return Action|null found Action or null if not found
      * @throws PDOException when mySQL related errors occur
      **/
-    public function getActionByInviteId(PDO $pdo, string $inviteId) {
+    public function getActionByInviteId(PDO $pdo, string $inviteId) : ?Action {
         try {
             $inviteId = self::validateUuid($inviteId);
         } catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
@@ -364,7 +364,7 @@ class Action implements \JsonSerializable {
      * @return SplFixedArray all Actions found
      * @throws PDOException when mySQL related errors occur
      **/
-    public static function getAllActions(PDO $pdo) {
+    public static function getAllActions(PDO $pdo) : \SplFixedArray{
         // create query template
         $query = "SELECT actionId, inviteId, approved, actionDate, actionUser FROM action";
         $statement = $pdo->prepare($query);
