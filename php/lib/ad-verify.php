@@ -1,5 +1,5 @@
 <?php
-require_once("/etc/apache2/capstone-mysql/Secrets.php");
+require_once("/etc/nginx/capstone-mysql/Secrets.php");
 /**
  * verifies whether the user is logged in or not; if so, the login timer is reset
  *
@@ -13,12 +13,13 @@ function verifyActiveDirectoryLogin() {
 
     // search the session for login data
     $loggedIn = false;
-    if(empty($_SESSION["adUser"]["username"]) === false) {
-        if((time() - $_SESSION["adUser"]["loginTime"]) < 600) {
-            $_SESSION["adUser"]["loginTime"] = time();
+    //var_dump($_SESSION["adUser"]->loginTime);
+    if(empty($_SESSION["adUser"]->username) === false) {
+        if((time() - $_SESSION["adUser"]->loginTime) < 600) {
+            //$_SESSION["adUser"]->loginTime = time();
             $loggedIn = true;
         } else {
-            $_SESSION["adUser"] = array();
+            $_SESSION["adUser"] = [];
             unset($_SESSION["adUser"]);
         }
     }
@@ -40,13 +41,13 @@ function isLoggedInAsAdmin(\Secrets $secrets ) : bool {
     }
     // search the session for login data
     $isAdmin = false;
-    if(empty($_SESSION["adUser"]["username"]) === false) {
-        if((time() - $_SESSION["adUser"]["loginTime"]) < 600) {
+    if(empty($_SESSION["adUser"]->username) === false) {
+        if((time() - $_SESSION["adUser"]->loginTime) < 600) {
 
             // see if the the user is an admin user
-            $_SESSION["adUser"]["loginTime"] = time();
-            $admins = $secrets->getSecret("adminUsers");
-            $isAdmin = in_array($_SESSION["adUser"]["username"], $admins);
+            $_SESSION["adUser"]->loginTime = time();
+            $admins = $secrets->getSecret("admins");
+            $isAdmin = in_array($_SESSION["adUser"]->username, $admins->adminsList);
         } else {
             $_SESSION["adUser"] = array();
             unset($_SESSION["adUser"]);

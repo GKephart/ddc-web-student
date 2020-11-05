@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__DIR__, 3) . "/php/classes/autoload.php");
+require_once(dirname(__DIR__, 3) . "/php/Classes/autoload.php");
 require_once(dirname(__DIR__, 3) . "/php/lib/ad-verify.php");
 require_once(dirname(__DIR__, 3) . "/php/lib/mailer.php");
 require_once(dirname(__DIR__, 3) . "/php/lib/xsrf.php");
@@ -9,6 +9,7 @@ require_once(dirname(__DIR__, 3) . "/php/lib/jwt.php");
 
 use DdcFullstack\DdcWebStudent\Action;
 use DdcFullstack\DdcWebStudent\Invite;
+use Ramsey\Uuid\Uuid;
 
 // set Email configuration parameters
 $fromAddress = "pschulzetenber@cnm.edu";
@@ -49,7 +50,7 @@ $reply->data = null;
 
 try {
 
-    $secrets = new \Secrets("/etc/apache2/capstone-mysql/ddctwitter.ini");
+    $secrets = new \Secrets("/etc/nginx/capstone-mysql/ddc-web.ini");
     $pdo = $secrets->getPdoObject();
 
     $method = $_SERVER["HTTP_X_HTTP_METHOD"] ?? $_SERVER["REQUEST_METHOD"];
@@ -61,13 +62,15 @@ try {
     $command = filter_input(INPUT_GET, "command", FILTER_SANITIZE_STRING);
     $class = filter_input(INPUT_GET, "class", FILTER_SANITIZE_STRING);
 
+
+
     // ensure there's a user logged in
     if (verifyActiveDirectoryLogin() === false) {
         throw(new RuntimeException("user not logged into active directory", 401));
     }
 
     $isAdmin = isLoggedInAsAdmin($secrets);
-    $admins = $secrets->getSecret("admins")["adminslist"];
+    $admins = $secrets->getSecret("admins")->adminsList;
 
     $adminEmails = [];
     foreach ($admins as $admin) {
@@ -81,7 +84,7 @@ try {
         if ($isAdmin !== true) {
             throw(new RuntimeException("user is not an admin user", 401));
         }
-        if ($method !== "GET") {
+        if ($method === "GET") {
             $reply->data = Action::getAllActions($pdo)->toArray();
             foreach($reply->data as $action) {
                 $action->setInvite(Invite::getInviteByInviteId($pdo, $action->getInviteId()));
@@ -91,7 +94,7 @@ try {
             verifyXsrf();
             $requestContent = file_get_contents("php://input");
             $requestObject = json_decode($requestContent);
-            $action = new Action(null, $requestObject->inviteId, $requestObject->approved, $_SESSION["adUser"]["username"]);
+            $action = new Action(generateUuidV4(), $requestObject->inviteId, $requestObject->approved, $_SESSION["adUser"]->username);
 
             if($action->isApproved() === true) {
                 $invite = Invite::getInviteByInviteId($pdo, $action->getInviteId());
@@ -110,67 +113,73 @@ try {
                 $recipientName = $invite->getFullName();
                 $inviteAcceptedSubject = str_replace("--FULL_NAME--", $recipientName, $inviteAcceptedSubject);
                 $inviteAcceptedMessage = str_replace("--FULL_NAME--", $recipientName, $inviteAcceptedMessage);
-                sendEmail($fromAddress, $fromName, $recipientAddress, $recipientName, $inviteAcceptedSubject, $inviteAcceptedMessage);
+               // sendEmail($fromAddress, $fromName, $recipientAddress, $recipientName, $inviteAcceptedSubject, $inviteAcceptedMessage);
             }
 
             $action->insert($pdo);
             $reply->message = "Invite successfully processed";
-        } else if($class === "invite") {
-            if($method === "GET") {
-                if($isAdmin === false) {
-                    throw(new RuntimeException("user is not an admin user", 401));
-                }
-                if($command === "processed") {
-                    $actionInviteMap = Invite::getProcessedInvites($pdo);
-                    $result = [];
-                    foreach($actionInviteMap as $action) {
-                        $action->setInvite($actionInviteMap->getInfo());
-                        $result[] = $action;
-                    }
-                    $reply->data = $result;
-                    // report all waiting invites
-                } else if($command === "waiting") {
-                    $reply->data = Invite::getWaitingInvites($pdo)->toArray();
-                } else {
-                    throw(new InvalidArgumentException("action type not specified"));
-                }
-            } if($method === "POST") {
-                // verify XSRF tokens
-                verifyXsrf();
-
-                // don't allow them to flood us with invites
-                $alreadyInvited = Invite::getInviteByUsername($pdo, $_SESSION["adUser"]["username"]);
-
-                //todo rewrite the Invite class so that getInviteByUsername to return an object not an SPLFixed array
-                if($alreadyInvited->getSize() > 0) {
-                    throw(new InvalidArgumentException("You already have an invite awaiting action by a program administrator. You will receive an Email in your CNM Email if your invite is approved.", 405));
-                }
-
-                $username = filter_var($_SESSION["adUser"]["username"], FILTER_SANITIZE_STRING);
-                $username = escapeshellarg($username);
-                $command = escapeshellcmd("sudo /etc/sssd/bin/user-get $username");
-                $userJson = exec($command);
-                $user = json_decode($userJson);
-                if(empty($user->data) === false) {
-                    throw(new InvalidArgumentException("You already have an active account on the Deep Dive Coding Bootcamp server. An invitation is not necessary.", 405));
-                }
-
-                // grab session and server variables and create an Invite
-                $invite = new Invite(null, $_SESSION["adUser"]["username"], $_SESSION["adUser"]["fullName"], $_SERVER["HTTP_USER_AGENT"], $_SERVER["REMOTE_ADDR"]);
-                $invite->insert($pdo);
-                $inviteCreatedSubject = str_replace("--FULL_NAME--", $_SESSION["adUser"]["fullName"], $inviteCreatedSubject);
-                $inviteCreatedMessage = str_replace("--FULL_NAME--", $_SESSION["adUser"]["fullName"], $inviteCreatedMessage);
-                $inviteCreatedMessage = str_replace("--USERNAME--", $_SESSION["adUser"]["username"], $inviteCreatedMessage);
-                sendEmail($fromAddress, $fromName, $adminEmails, null, $inviteCreatedSubject, $inviteCreatedMessage);
-                $reply->message = "Invite successfully submitted. You will receive an Email in your CNM Email if your invite is approved by a program administrator.";
-            }
-        } else {
-            throw(new InvalidArgumentException("invalid class", 405));
         }
+    } else if($class === "invite") {
 
+
+        if($method === "GET") {
+
+            if($isAdmin === false) {
+                throw(new RuntimeException("user is not an admin user", 401));
+            }
+
+
+            if($command === "processed") {
+                $actionInviteMap = Invite::getProcessedInvites($pdo);
+                $result = [];
+                foreach($actionInviteMap as $action) {
+                    $action->setInvite($actionInviteMap->getInfo());
+                    $result[] = $action;
+                }
+                $reply->data = $result;
+                // report all waiting invites
+            } else if($command === "waiting") {
+                $reply->data = Invite::getWaitingInvites($pdo)->toArray();
+            } else {
+                throw(new InvalidArgumentException("action type not specified"));
+            }
+        } if($method === "POST") {
+            // verify XSRF tokens
+            verifyXsrf();
+
+
+            // don't allow them to flood us with invites
+            $alreadyInvited = Invite::getInviteByUsername($pdo, $_SESSION["adUser"]->username);
+
+            //todo rewrite the Invite class so that getInviteByUsername to return an object not an SPLFixed array
+            if($alreadyInvited->getSize() > 0) {
+                throw(new InvalidArgumentException("You already have an invite awaiting action by a program administrator. You will receive an Email in your CNM Email if your invite is approved.", 405));
+            }
+
+            $username = filter_var($_SESSION["adUser"]->username, FILTER_SANITIZE_STRING);
+            $username = escapeshellarg($username);
+            $command = escapeshellcmd("sudo /etc/sssd/bin/user-get $username");
+            $userJson = exec($command);
+            $user = json_decode($userJson);
+            if(empty($user->data) === false) {
+                throw(new InvalidArgumentException("You already have an active account on the Deep Dive Coding Bootcamp server. An invitation is not necessary.", 405));
+            }
+
+            // grab session and server variables and create an Invite
+            $invite = new Invite(generateUuidV4(), $_SESSION["adUser"]->username, $_SESSION["adUser"]->fullName, $_SERVER["HTTP_USER_AGENT"], $_SERVER["REMOTE_ADDR"]);
+
+            $inviteCreatedSubject = str_replace("--FULL_NAME--", $_SESSION["adUser"]->fullName, $inviteCreatedSubject);
+            $inviteCreatedMessage = str_replace("--FULL_NAME--", $_SESSION["adUser"]->fullName, $inviteCreatedMessage);
+            $inviteCreatedMessage = str_replace("--USERNAME--", $_SESSION["adUser"]->username, $inviteCreatedMessage);
+            // sendEmail($fromAddress, $fromName, $adminEmails, null, $inviteCreatedSubject, $inviteCreatedMessage);
+            $reply->message = "Invite successfully submitted. You will receive an Email in your CNM Email if your invite is approved by a program administrator.";
+            $invite->insert($pdo);
+        }
+    } else {
+        throw(new InvalidArgumentException("invalid class", 405));
     }
 
-} catch (\Exception | TypeError | InvalidArgumentException | RuntimeException $exception) {
+} catch (\Exception | TypeError | InvalidArgumentException | RuntimeException | Error $exception) {
     $reply->status = $exception->getCode();
     $reply->message = $exception->getMessage();
 }

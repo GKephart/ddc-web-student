@@ -8,6 +8,7 @@ require_once(dirname(__DIR__, 2) . "/vendor/autoload.php");
 
 use Ramsey\Uuid\Uuid;
 use \InvalidArgumentException;
+use Ramsey\Uuid\UuidInterface;
 use \RangeException;
 use \Exception;
 use \TypeError;
@@ -71,7 +72,7 @@ class Action implements \JsonSerializable {
      * @throws RangeException if data values are out of bounds (e.g., strings too long, negative integers)
      * @throws Exception if some other exception is thrown
      */
-    public function __construct(Uuid $newActionId, Uuid $newInviteId, $newApproved, string $newActionUser, $newActionDate = null) {
+    public function __construct( $newActionId,  $newInviteId, $newApproved, string $newActionUser, $newActionDate = null) {
         try {
             $this->setActionId($newActionId);
             $this->setInviteId($newInviteId);
@@ -90,7 +91,7 @@ class Action implements \JsonSerializable {
      *
      * @return Uuid current value of action id
      **/
-    public function getActionId() : Uuid {
+    public function getActionId() {
         return($this->actionId);
     }
 
@@ -101,7 +102,7 @@ class Action implements \JsonSerializable {
      * @throws InvalidArgumentException if action id is not an integer
      * @throws RangeException if action id is negative
      **/
-    public function setActionId(Uuid $newActionId) {
+    public function setActionId($newActionId) {
         try {
             $uuid = self::validateUuid($newActionId);
         } catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
@@ -118,7 +119,7 @@ class Action implements \JsonSerializable {
      *
      * @return Uuid current value of invite id
      **/
-    public function getInviteId() : Uuid{
+    public function getInviteId() {
         return($this->inviteId);
     }
 
@@ -129,7 +130,7 @@ class Action implements \JsonSerializable {
      * @throws InvalidArgumentException if invite id is not an integer
      * @throws RangeException if invite id is negative
      **/
-    public function setInviteId(Uuid $newInviteId) {
+    public function setInviteId( $newInviteId) {
         try {
             $uuid = self::validateUuid($newInviteId);
         } catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
@@ -257,13 +258,9 @@ class Action implements \JsonSerializable {
      * @throws PDOException when mySQL related errors occur
      **/
     public function insert(PDO $pdo) {
-        // enforce the actionId is null (i.e., don't insert an Action that already exists)
-        if($this->actionId !== null) {
-            throw(new PDOException("not a new action"));
-        }
 
         // create query template
-        $query = "INSERT INTO action(actionId, inviteId, approved, actionUser) VALUES(:inviteId, :approved, :actionUser)";
+        $query = "INSERT INTO action(actionId, inviteId, approved, actionUser) VALUES(:actionId,:inviteId, :approved, :actionUser)";
         $statement = $pdo->prepare($query);
 
         // bind the member variables to the place holders in the template
@@ -275,10 +272,6 @@ class Action implements \JsonSerializable {
         ];
 
         $statement->execute($parameters);
-
-        // update the null action id with what mySQL just gave us
-        $this->actionId = intval($pdo->lastInsertId());
-        $this->actionDate = new DateTime();
     }
 
     /**
@@ -290,12 +283,10 @@ class Action implements \JsonSerializable {
      * @throws PDOException when mySQL related errors occur
      **/
     public function getActionByActionId(PDO $pdo, string $actionId) : ?Action {
-
-        try {
-            $actionId = self::validateUuid($actionId);
-        } catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
-            throw(new \PDOException($exception->getMessage(), 0, $exception));
+        if(Uuid::isValid($actionId) === false) {
+            throw new InvalidArgumentException("Please provide a valid Uuid");
         }
+        $inviteId = Uuid::fromString($actionId);
         // sanitize the action id before searching
         // create query template
         $query = "SELECT actionId, inviteId, actionDate, approved, actionUser FROM action WHERE actionId = :actionId";
@@ -328,12 +319,11 @@ class Action implements \JsonSerializable {
      * @throws PDOException when mySQL related errors occur
      **/
     public function getActionByInviteId(PDO $pdo, string $inviteId) : ?Action {
-        try {
-            $inviteId = self::validateUuid($inviteId);
-        } catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
-            throw(new \PDOException($exception->getMessage(), 0, $exception));
-        }
+       if(Uuid::isValid($inviteId) === false) {
+           throw new InvalidArgumentException("Please provide a valid Uuid");
+       }
 
+       $inviteId = Uuid::fromString($inviteId);
 
         // create query template
         $query = "SELECT actionId, inviteId, actionDate, approved, actionUser FROM action WHERE inviteId = :inviteId";
@@ -361,7 +351,7 @@ class Action implements \JsonSerializable {
      * gets all Actions
      *
      * @param PDO $pdo pointer to mySQL connection
-     * @return SplFixedArray all Actions found
+     * @return \SplFixedArray all Actions found
      * @throws PDOException when mySQL related errors occur
      **/
     public static function getAllActions(PDO $pdo) : \SplFixedArray{
@@ -371,7 +361,7 @@ class Action implements \JsonSerializable {
         $statement->execute();
 
         // build an array of actions
-        $actions = new SplFixedArray($statement->rowCount());
+        $actions = new \SplFixedArray($statement->rowCount());
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         while(($row = $statement->fetch()) !== false) {
             try {

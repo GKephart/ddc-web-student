@@ -23,9 +23,12 @@ require_once(dirname(__DIR__, 2) . "/vendor/autoload.php");
  * @author Dylan McDonald <dmcdonald21@cnm.edu>
  **/
 class Invite implements \JsonSerializable {
+    use ValidateDate;
+    use ValidateUuid;
     /**
      * id for this Invite; this is the primary key
-     * @var Uuid $inviteId
+     * @var Uuid|string
+     * $inviteId
      **/
     private $inviteId;
 
@@ -72,8 +75,9 @@ class Invite implements \JsonSerializable {
      * @throws RangeException when parameters are out of range or too large
      * @throws Exception rethrown when other exceptions occur
      **/
-    public function __construct(Uuid $newInviteId, string $newUsername, string $newFullName, string $newBrowser, string $newIp, $newCreateDate = null) {
+    public function __construct( $newInviteId, string $newUsername, string $newFullName, string $newBrowser, string $newIp, $newCreateDate = null) {
         try {
+
             $this->setInviteId($newInviteId);
             $this->setUsername($newUsername);
             $this->setFullName($newFullName);
@@ -82,7 +86,7 @@ class Invite implements \JsonSerializable {
             $this->setCreateDate($newCreateDate);
         } catch(InvalidArgumentException | RangeException | Exception | TypeError $exception) {
             $exceptionType = get_class($exception);
-            throw(new $exceptionType($exception->getMessage(), 0, $exception));
+            throw(new $exceptionType($exception->getMessage(), $exception->getCode(), $exception));
         }
     }
 
@@ -102,26 +106,15 @@ class Invite implements \JsonSerializable {
      * @throws InvalidArgumentException if invite id is not an integer
      * @throws RangeException if invite id is negative
      **/
-    public function setInviteId( Uuid $newInviteId) {
-        // base case: if the invite id is null, this a new invite without a mySQL assigned id (yet)
-        if($newInviteId === null) {
-            $this->inviteId = null;
-            return;
+    public function setInviteId($newInviteId) {
+        try {
+            $uuid = self::validateUuid($newInviteId);
+        } catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+            $exceptionType = get_class($exception);
+            throw(new $exceptionType($exception->getMessage(), $exception->getCode(), $exception));
         }
-
-        // verify the invite id is valid
-        $newInviteId = filter_var($newInviteId, FILTER_VALIDATE_INT);
-        if($newInviteId === false) {
-            throw(new InvalidArgumentException("invite id is not a valid integer"));
-        }
-
-        // verify the invite id is positive
-        if($newInviteId <= 0) {
-            throw(new RangeException("invite id is not positive"));
-        }
-
         // convert and store the tweet id
-        $this->inviteId = intval($newInviteId);
+        $this->inviteId = $uuid;
     }
 
     /**
@@ -206,7 +199,7 @@ class Invite implements \JsonSerializable {
      * @throws InvalidArgumentException if the date is incorrectly formatted
      * @throws RangeException if the date is not a Gregorian date
      **/
-    public function setCreateDate(string $newCreateDate) {
+    public function setCreateDate($newCreateDate) {
         // base case: if the create date is null, use the current date and time
         if($newCreateDate === null) {
             $this->createDate = new DateTime();
@@ -215,8 +208,8 @@ class Invite implements \JsonSerializable {
 
         // store the create date
         try {
-            $newCreateDate = validateDate($newCreateDate);
-        } catch(InvalidArgumentException $invalidArgument) {
+            $newCreateDate = self::validateDateTime($newCreateDate);
+        } catch(InvalidArgumentException| Exception $invalidArgument) {
             throw(new InvalidArgumentException($invalidArgument->getMessage(), 0, $invalidArgument));
         } catch(RangeException $range) {
             throw(new RangeException($range->getMessage(), 0, $range));
@@ -240,7 +233,7 @@ class Invite implements \JsonSerializable {
      * @throws InvalidArgumentException if browser is invalid
      * @throws RangeException if browser is too large
      **/
-    public function setBrowser($newBrowser) : string {
+    public function setBrowser($newBrowser) {
         // verify the browser is secure
         $newBrowser = trim($newBrowser);
         $newBrowser = filter_var($newBrowser, FILTER_SANITIZE_STRING);
@@ -294,18 +287,15 @@ class Invite implements \JsonSerializable {
      * @throws PDOException when mySQL related errors occur
      **/
     public function insert(PDO $pdo) {
-        // enforce the inviteId is null (i.e., don't insert an Invite that already exists)
-        if($this->inviteId !== null) {
-            throw(new PDOException("not a new invite"));
-        }
-
         // create query template
-        $query = "INSERT INTO invite(inviteId, username, fullName, browser, ip) VALUES(:inviteId, :username, :fullName, :browser, :ip)";
+        $query = "INSERT INTO invite(inviteId, username, fullName, browser, ip, createDate) VALUES(:inviteId, :username, :fullName, :browser, :ip, :createDate)";
         $statement = $pdo->prepare($query);
 
+        $formattedDate = $this->createDate->format("Y-m-d H:i:s.u");
+
         // bind the member variables to the place holders in the template
-        $parameters = ["username" => $this->username, "fullName" => $this->fullName,
-            "browser" => $this->browser, "ip" => $this->ip];
+        $parameters = ["inviteId" =>$this->inviteId->getBytes(),"username" => $this->username, "fullName" => $this->fullName,
+            "browser" => $this->browser, "ip" => $this->ip, "createDate" =>$formattedDate];
         $statement->execute($parameters);
 
         // update the null invite id with what mySQL just gave us
@@ -320,15 +310,17 @@ class Invite implements \JsonSerializable {
      * @return Invite|null found Invite or null if not found
      * @throws PDOException when mySQL related errors occur
      **/
-    public static function getInviteByInviteId(PDO $pdo, string $inviteId) : Invite {
-
-
+    public static function getInviteByInviteId(PDO $pdo,  $inviteId) : ?Invite {
+        if(Uuid::isValid($inviteId) === false) {
+            throw new InvalidArgumentException("Please provide a valid Uuid");
+        }
+        $inviteId = Uuid::fromString($inviteId);
         // create query template
         $query = "SELECT inviteId, username, fullName, createDate, browser, ip FROM invite WHERE inviteId = :inviteId";
         $statement = $pdo->prepare($query);
 
         // bind the invite id to the place holder in the template
-        $parameters = ["inviteId" => $inviteId];
+        $parameters = ["inviteId" => $inviteId->getBytes()];
         $statement->execute($parameters);
 
         // grab the Invite from mySQL
@@ -421,6 +413,7 @@ INNER JOIN action ON invite.inviteId = action.inviteId";
      * @throws PDOException when mySQL related errors occur
      **/
     public static function getWaitingInvites(PDO $pdo) : \SplFixedArray {
+
         // create query template
         $query = "SELECT invite.inviteId, createDate, username, fullName, browser, ip
 FROM invite
@@ -430,7 +423,7 @@ WHERE actionId IS NULL";
         $statement->execute();
 
         // build an array of invites
-        $invites = new SplFixedArray($statement->rowCount());
+        $invites = new \SplFixedArray($statement->rowCount());
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         while(($row = $statement->fetch()) !== false) {
             try {

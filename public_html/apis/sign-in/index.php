@@ -42,7 +42,6 @@ try {
         $search = $provider->search();
         $search->select(["displayname", "employeeid"]);
         $result = $search->findBy("samaccountname",$username);
-
         $isAdmin = in_array( $username, $admins->adminsList);
 
         $adUser= (object) [
