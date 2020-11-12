@@ -46,7 +46,7 @@ function setJwtAndAuthHeader(string $value, stdClass $content): void {
     $_SESSION["JWT-TOKEN"] = (string)$token;
 
     // add the JWT to the header
-    header("X-JWT-TOKEN: $token");
+    header("Authorization: $token");
 }
 
 /**

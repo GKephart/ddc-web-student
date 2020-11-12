@@ -10,6 +10,7 @@ use Adldap\{Adldap,Connections\Provider};
 $reply = new stdClass();
 $reply->status = 200;
 $reply->message = null;
+$reply->data = null;
 
 try {
     // verify XSRF token defend against operator error

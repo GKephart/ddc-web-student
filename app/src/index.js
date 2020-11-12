@@ -6,13 +6,29 @@ import { Route, Switch } from "react-router";
 import { FourOhFour } from './ui/FourOhFour/FourOhFour'
 import { Home } from './ui/Home/Home'
 import { StudentSignUp } from './ui/StudentSignUp/StudentSignUp'
-import { SshKeyEditor } from './ui/SshKeyEditor'
+import { SshKeyEditor } from './ui/SshKeyEditor/SshKeyEditor'
 import { UserAdmin } from './ui/UserAdmin/UserAdmin'
 import { InviteApproval } from './ui/InviteApproval/InviteApproval'
+import { httpConfig } from './utils/http-config'
+import store from "./store/store"
+import { Provider } from 'react-redux'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons'
 
-const Routing = () => (
+library.add(faEnvelope, faKey);
+
+
+
+
+const Routing = (store) => {
+  httpConfig.get("/apis/earl-grey/")
+    .catch(() => {
+    console.error("error connecting to the server")
+  })
+  return (
   <>
     <React.StrictMode>
+      <Provider store={store}>
       <BrowserRouter>
         <Switch>
           <Route exact path="/ssh-key-editor" component={SshKeyEditor}/>
@@ -23,8 +39,10 @@ const Routing = () => (
           <Route component={FourOhFour}/>
         </Switch>
       </BrowserRouter>
+      </Provider>
     </React.StrictMode>
   </>
-);
-ReactDOM.render(<Routing/>, document.querySelector('#root'));
+  )
+};
+ReactDOM.render(Routing(store), document.querySelector('#root'));
 

@@ -141,19 +141,26 @@ try {
             } else if($command === "waiting") {
                 $reply->data = Invite::getWaitingInvites($pdo)->toArray();
             } else {
-                throw(new InvalidArgumentException("action type not specified"));
+                throw(new InvalidArgumentException("action type not specified",400));
             }
         } if($method === "POST") {
             // verify XSRF tokens
             verifyXsrf();
 
+            $requestContent = file_get_contents("php://input");
+            $requestObject = json_decode($requestContent);
+            $toggle = filter_var($requestObject->toggle, FILTER_VALIDATE_BOOLEAN);
+
+            if($toggle === false) {
+                throw new InvalidArgumentException("Please verify that you are an incoming student for Deep Dive Coding's Fullstack Bootcamp", 444);
+            }
 
             // don't allow them to flood us with invites
             $alreadyInvited = Invite::getInviteByUsername($pdo, $_SESSION["adUser"]->username);
 
             //todo rewrite the Invite class so that getInviteByUsername to return an object not an SPLFixed array
             if($alreadyInvited->getSize() > 0) {
-                throw(new InvalidArgumentException("You already have an invite awaiting action by a program administrator. You will receive an Email in your CNM Email if your invite is approved.", 405));
+                throw(new InvalidArgumentException("You already have an invite awaiting action by a program administrator. You will receive an Email in your CNM Email if your invite is approved.", 425));
             }
 
             $username = filter_var($_SESSION["adUser"]->username, FILTER_SANITIZE_STRING);
@@ -161,9 +168,9 @@ try {
             $command = escapeshellcmd("sudo /etc/sssd/bin/user-get $username");
             $userJson = exec($command);
             $user = json_decode($userJson);
-            if(empty($user->data) === false) {
-                throw(new InvalidArgumentException("You already have an active account on the Deep Dive Coding Bootcamp server. An invitation is not necessary.", 405));
-            }
+//            if(empty($user->data) === false) {
+//                throw(new InvalidArgumentException("You already have an active account on the Deep Dive Coding Bootcamp server. An invitation is not necessary.", 412));
+//            }
 
             // grab session and server variables and create an Invite
             $invite = new Invite(generateUuidV4(), $_SESSION["adUser"]->username, $_SESSION["adUser"]->fullName, $_SERVER["HTTP_USER_AGENT"], $_SERVER["REMOTE_ADDR"]);
@@ -176,10 +183,10 @@ try {
             $invite->insert($pdo);
         }
     } else {
-        throw(new InvalidArgumentException("invalid class", 405));
+        throw(new InvalidArgumentException("invalid class", 400));
     }
 
-} catch (\Exception | TypeError | InvalidArgumentException | RuntimeException | Error $exception) {
+} catch (\Exception | TypeError | InvalidArgumentException | RuntimeException $exception) {
     $reply->status = $exception->getCode();
     $reply->message = $exception->getMessage();
 }

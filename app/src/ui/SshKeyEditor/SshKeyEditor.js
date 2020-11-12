@@ -1,4 +1,6 @@
 import React from 'react'
+import { SshKeyPostFormContent } from './SshKeyEditorPostForm/SshKeyPostFormContent'
+import { SshKeyPostForm } from './SshKeyEditorPostForm/SshKeyPostForm'
 
 export const SshKeyEditor = () => {
   return (
@@ -31,20 +33,7 @@ export const SshKeyEditor = () => {
               No SSH keys found.
             </section>
             <hr/>
-            <form className="form py-3">
-              <h2>Add SSH Key</h2>
-              <div className="form-group">
-                <label htmlFor="newSshKey">Paste SSH Key Here</label>
-                <div className="input-group py-1">
-                  <textarea rows="12" cols="80" id="newSshKey" name="newSshKey" className="form-control"/>
-                </div>
-              </div>
-              <div className="form-group">
-                <button className="btn btn-lg btn-info" type="submit">Add SSH Key</button>
-                &nbsp;
-                <button className="btn btn-lg btn-warning" type="reset">Reset</button>
-              </div>
-            </form>
+            <SshKeyPostForm />
           </div>
         </div>
       </div>
