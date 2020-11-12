@@ -14,7 +14,7 @@ try {
     $reply = new stdClass();
     $reply->status = 200;
     $reply->message = "wtf";
-    $reply->data=null;
+    $reply->data = null;
 
     // kick them out if there's no session
     if(empty($_SESSION["adUser"]) === true) {
@@ -57,7 +57,6 @@ try {
 } catch(Exception | Error $exception) {
     $reply->status = 500;
     $reply->message = $exception->getMessage();
-    $reply->trace = $exception->getTrace();
 }
 
 // encode and report the SSH results
