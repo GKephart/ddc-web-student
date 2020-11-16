@@ -7,10 +7,12 @@ import { SshKeyTableItem } from './SshKeyTableItem'
 
 export const SshKeyEditor = () => {
   const keys = useSelector(state => state.keys ? state.keys : []);
+  const {auth} = useSelector(state => state.auth ? state.auth : null);
 
   const dispatch = useDispatch();
   const initialEffects = () => {
     dispatch(fetchSshKeys());
+
   };
 
   React.useEffect(initialEffects, [dispatch]);
@@ -19,7 +21,7 @@ export const SshKeyEditor = () => {
       <div className="container">
         <div className="row">
           <div className="col-xs-12 col-md-9">
-            <h2 className="py-3">SSH Keys For Username Full Name</h2>
+            <h2 className="py-3">SSH Keys For {auth.username}</h2>
             <div className="table-responsive">
               <table className="table table-bordered x table-striped py-3">
                 <thead>
