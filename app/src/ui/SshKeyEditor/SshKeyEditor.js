@@ -13,9 +13,7 @@ export const SshKeyEditor = () => {
     dispatch(fetchSshKeys());
   };
 
-  const inputs = [];
-  React.useEffect(initialEffects, inputs);
-
+  React.useEffect(initialEffects, [dispatch]);
   return (
     <>
       <div className="container">
@@ -24,13 +22,17 @@ export const SshKeyEditor = () => {
             <h2 className="py-3">SSH Keys For Username Full Name</h2>
             <div className="table-responsive">
               <table className="table table-bordered x table-striped py-3">
+                <thead>
                 <tr>
                   <th>Bits</th>
                   <th>Fingerprint</th>
                   <th>Comment</th>
                   <th>Delete</th>
                 </tr>
+                </thead>
+                <tbody >
                 {keys.map((key) => <SshKeyTableItem sshKey={key} key={key.bits}/> )}
+                </tbody>
               </table>
             </div>
             <section className="alert alert-warning py-3">

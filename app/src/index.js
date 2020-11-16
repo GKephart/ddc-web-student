@@ -14,6 +14,7 @@ import store from "./store/store"
 import { Provider } from 'react-redux'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons'
+import { PrivateRoute } from './ui/shared/components/PrivateRoute'
 
 library.add(faEnvelope, faKey);
 
@@ -31,7 +32,9 @@ const Routing = (store) => {
       <Provider store={store}>
       <BrowserRouter>
         <Switch>
-          <Route exact path="/ssh-key-editor" component={SshKeyEditor}/>
+          <PrivateRoute path="/ssh-key-editor">
+            <SshKeyEditor />
+          </PrivateRoute>
           <Route exact path="/sign-up" component={StudentSignUp}/>
           <Route exact path="/user-admin" component={UserAdmin}/>
           <Route exact path="/invite-approval" component={InviteApproval}/>
