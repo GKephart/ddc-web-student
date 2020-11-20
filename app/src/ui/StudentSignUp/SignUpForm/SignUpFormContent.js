@@ -115,7 +115,6 @@ export const SignUpFormContent = (props) => {
                 onClick={handleReset}>{/* Font Aweosme Goes Here*/} &nbsp;Reset
         </button>
       </Form>
-      <FormDebugger {...props} />
       {status && (<div className={status.type}>{status.message}</div>)}
     </>
   )

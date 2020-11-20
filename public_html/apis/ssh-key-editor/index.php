@@ -13,7 +13,7 @@ try {
     // create an empty result
     $reply = new stdClass();
     $reply->status = 200;
-    $reply->message = "wtf";
+    $reply->message = "";
     $reply->data = null;
 
     // kick them out if there's no session
@@ -22,39 +22,33 @@ try {
     }
 
     // execute the command from the session user
-    $username = filter_var($_SESSION["adUser"]->username);
+    $username = $_SESSION["adUser"]->username;
     $username = escapeshellarg($username);
     if($method === "GET") {
-        $command = escapeshellcmd("sudo -u $username -H /usr/local/bin/list-ssh-keys");
+        $command = escapeshellcmd("sudo /usr/local/bin/list-ssh-keys $username");
         $jsonResult = exec($command);
-
-        // attach the keys to the result and re-encode it
-        $keys = json_decode($jsonResult);
-        $reply->keys = $keys;
+        $reply->data = json_decode($jsonResult);
 
     } else if($method === "POST" || $method === "PUT") {
         // verify XSRF and load the key
         verifyXsrf();
         $requestContent = file_get_contents("php://input");
         $requestObject = json_decode($requestContent);
-
-        // add an SSH key
-        if($method === "POST") {
-            $key = escapeshellarg($requestObject);
-            $command = escapeshellcmd("sudo -u $username -H /usr/local/bin/post-ssh-key $key");
-
-            // PUT is used to delete a key since DELETE (typically) doesn't have a body
-        } else if($method === "PUT") {
+        $delete = filter_input(INPUT_GET, "delete", FILTER_VALIDATE_BOOLEAN);
+        $key = escapeshellarg($requestObject->key);
+        if($method === "POST" && $delete === true ) {
             // feed the key to the SSH deleter
-            $key = escapeshellarg($requestObject->key);
             $command = escapeshellcmd("sudo -u $username -H /usr/local/bin/delete-ssh-key $key");
+        } else if($method === "POST") {
+            $command = escapeshellcmd("sudo /usr/local/bin/post-ssh-key $key $username");
         }
-
         // both methods return JSON - just give it back to Angular
-//        $jsonResult = exec($command);
-//        $reply = json_decode($jsonResult);
+        $jsonResult = exec($command);
+        $result = json_decode($jsonResult);
+        $reply->status = $result->status;
+        $reply->message = $result->message;
     }
-} catch(Exception | Error $exception) {
+} catch(Exception | \InvalidArgumentException | \RuntimeException| \Error $exception) {
     $reply->status = 500;
     $reply->message = $exception->getMessage();
 }

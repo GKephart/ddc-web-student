@@ -33,7 +33,7 @@ const Routing = (store) => {
       <BrowserRouter>
         <Switch>
           <PrivateRoute path="/ssh-key-editor">
-            <SshKeyEditor />
+              <SshKeyEditor />
           </PrivateRoute>
           <Route exact path="/sign-up" component={StudentSignUp}/>
           <Route exact path="/user-admin" component={UserAdmin}/>

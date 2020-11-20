@@ -168,9 +168,9 @@ try {
             $command = escapeshellcmd("sudo /etc/sssd/bin/user-get $username");
             $userJson = exec($command);
             $user = json_decode($userJson);
-//            if(empty($user->data) === false) {
-//                throw(new InvalidArgumentException("You already have an active account on the Deep Dive Coding Bootcamp server. An invitation is not necessary.", 412));
-//            }
+            if(empty($user->data) === false) {
+                throw(new InvalidArgumentException("You already have an active account on the Deep Dive Coding Bootcamp server. An invitation is not necessary.", 412));
+            }
 
             // grab session and server variables and create an Invite
             $invite = new Invite(generateUuidV4(), $_SESSION["adUser"]->username, $_SESSION["adUser"]->fullName, $_SERVER["HTTP_USER_AGENT"], $_SERVER["REMOTE_ADDR"]);
