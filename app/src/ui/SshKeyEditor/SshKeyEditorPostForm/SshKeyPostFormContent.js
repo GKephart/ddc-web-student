@@ -6,7 +6,6 @@ export function SshKeyPostFormContent (props) {
     values,
     errors,
     touched,
-    isSubmitting,
     handleChange,
     handleBlur,
     handleSubmit,

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Form, FormControl, InputGroup } from 'react-bootstrap'
-import { FormDebugger } from '../../shared/components/FormDebugger'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export const SignInContent = (props) => {
@@ -10,8 +9,6 @@ export const SignInContent = (props) => {
     values,
     errors,
     touched,
-    dirty,
-    isSubmitting,
     handleChange,
     handleBlur,
     handleSubmit,

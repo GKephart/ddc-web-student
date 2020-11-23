@@ -1,9 +1,7 @@
 import React from 'react'
 import { Form, FormControl, InputGroup } from 'react-bootstrap'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FormDebugger } from '../../shared/components/FormDebugger'
-import { Field } from 'formik'
+
 
 export const SignUpFormContent = (props) => {
 
@@ -13,8 +11,6 @@ export const SignUpFormContent = (props) => {
     values,
     errors,
     touched,
-    dirty,
-    isSubmitting,
     handleChange,
     handleBlur,
     handleSubmit,

@@ -3,12 +3,8 @@ import { httpConfig } from "../../../utils/http-config"
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { SignUpFormContent } from './SignUpFormContent'
-import { useDispatch } from 'react-redux'
 
 export const SignUpForm = () => {
-
-  const dispatch = useDispatch()
-
   const validator = Yup.object().shape({
     username: Yup.string()
       .required('email is required'),
