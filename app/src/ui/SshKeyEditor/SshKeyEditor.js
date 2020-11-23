@@ -8,7 +8,6 @@ import { StudentNavBar } from '../shared/components/NavBar/StudentNavBar'
 export const SshKeyEditor = () => {
   const keys = useSelector(state => state.keys ? state.keys : []);
   const auth = useSelector(state => state.auth ? state.auth : null);
-  console.log(auth)
   const [message, setMessage] = React.useState(null)
   const dispatch = useDispatch();
   const initialEffects = () => {

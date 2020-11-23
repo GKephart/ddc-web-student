@@ -15,7 +15,6 @@ import { fetchAuth } from '../../../store/auth'
 export function PrivateRoute ({children, ...rest}) {
   const [isLoading, setIsLoading] = React.useState(true)
   const authenticatedUser = useSelector((state) =>state.auth )
-  console.log(rest)
 
   const dispatch = useDispatch();
 
