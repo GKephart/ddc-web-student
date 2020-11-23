@@ -8,6 +8,7 @@ import { StudentNavBar } from '../shared/components/NavBar/StudentNavBar'
 export const SshKeyEditor = () => {
   const keys = useSelector(state => state.keys ? state.keys : []);
   const auth = useSelector(state => state.auth ? state.auth : null);
+  console.log(auth)
   const [message, setMessage] = React.useState(null)
   const dispatch = useDispatch();
   const initialEffects = () => {
@@ -22,7 +23,7 @@ export const SshKeyEditor = () => {
           <div className="container">
             <div className="row">
               <div className="col-xs-12 col-md-9">
-                <h2 className="py-3">SSH Keys For {auth.username}</h2>
+                <h2 className="py-3">SSH Keys For {auth.auth.username}</h2>
                 <div className="table-responsive">
                   <table className="table table-bordered x table-striped py-3">
                     <thead>

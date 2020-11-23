@@ -9,8 +9,10 @@ const slice = createSlice({
       return action.payload
     },
     deleteSshKey : (keys, action) => {
-      keys.filter(key => {
-       return key.key !== action.payload
+      return keys.filter(key => {
+        const result =  key.key !== action.payload.key
+        console.log(result)
+       return result
       })
     }
   }

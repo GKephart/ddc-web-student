@@ -5,14 +5,14 @@ import * as Yup from "yup";
 import {useDispatch} from "react-redux";
 import { httpConfig } from '../../../utils/http-config'
 import { SshKeyPostFormContent } from './SshKeyPostFormContent'
-import { getShhKeys } from '../../../store/key'
+import { fetchSshKeys} from '../../../store/key'
 
 export const SshKeyPostForm = () => {
 
   const dispatch = useDispatch()
 
   const validator = Yup.object().shape({
-    // a match parameter should be added to check for a valid ssh key.
+    // a match parameter should be added to check for a valid ed25519 ssh key.
     key: Yup.string().required("A valid ssh key is required")
   })
 
@@ -30,7 +30,7 @@ export const SshKeyPostForm = () => {
         setStatus({message, type});
         if(reply.status === 200 ) {
           resetForm();
-          dispatch(getShhKeys())
+          dispatch(fetchSshKeys())
         }
         setStatus({message, type});
       })
