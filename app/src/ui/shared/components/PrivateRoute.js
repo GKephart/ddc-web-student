@@ -12,9 +12,10 @@ import { fetchAuth } from '../../../store/auth'
  * @returns {Component} Either the protected component or a react router redirect depending if the user is logged in.
  * @constructor
  */
-export function PrivateRoute ({childComponent, ...rest}) {
+export function PrivateRoute ({children, ...rest}) {
   const [isLoading, setIsLoading] = React.useState(true)
   const authenticatedUser = useSelector((state) =>state.auth )
+  console.log(rest)
 
   const dispatch = useDispatch();
 
@@ -32,18 +33,15 @@ export function PrivateRoute ({childComponent, ...rest}) {
     isLoading
       ? <h2>Page is loading</h2>
       : <Route
-      {...rest}
-      render={({location}) => {
-
-        return authenticatedUser
-          ? childComponent
-          : < Redirect
-            to={{
-              pathname: "/",
-              state: {from: location}
-            }}
-          />
-      }}
+        {...rest}
+      render={({location}) => authenticatedUser ? (children)
+        : (<Redirect
+          to={{
+            pathname: "/",
+            state: {from: location}
+          }}
+        />)
+      }
     />
 
   )

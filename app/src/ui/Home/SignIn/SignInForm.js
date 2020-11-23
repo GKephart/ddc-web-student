@@ -6,9 +6,10 @@ import { SignInContent } from './SignInContent'
 import { useDispatch } from 'react-redux'
 import  jwtDecode from 'jwt-decode'
 import { getAuth } from '../../../store/auth'
+import { useHistory } from 'react-router'
 
 export const SignInForm = () => {
-
+  const history = useHistory();
    const dispatch = useDispatch()
 
   const validator = Yup.object().shape({
@@ -37,6 +38,9 @@ export const SignInForm = () => {
           resetForm();
           let jwtToken = jwtDecode(reply.headers["authorization"])
           dispatch(getAuth(jwtToken))
+          setTimeout(() =>{
+            history.push("/ssh-key-editor")
+          }, 750)
         }
         setStatus({message, type});
       });

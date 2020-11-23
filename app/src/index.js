@@ -13,10 +13,10 @@ import { httpConfig } from './utils/http-config'
 import store from "./store/store"
 import { Provider } from 'react-redux'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons'
+import { faEnvelope, faKey, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { PrivateRoute } from './ui/shared/components/PrivateRoute'
 
-library.add(faEnvelope, faKey);
+library.add(faEnvelope, faKey, faTrash);
 
 
 

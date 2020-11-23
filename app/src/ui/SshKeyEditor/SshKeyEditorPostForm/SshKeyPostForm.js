@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import {useDispatch} from "react-redux";
 import { httpConfig } from '../../../utils/http-config'
 import { SshKeyPostFormContent } from './SshKeyPostFormContent'
+import { getShhKeys } from '../../../store/key'
 
 export const SshKeyPostForm = () => {
 
@@ -29,7 +30,7 @@ export const SshKeyPostForm = () => {
         setStatus({message, type});
         if(reply.status === 200 ) {
           resetForm();
-          //dispatch(getAuth(jwtToken))
+          dispatch(getShhKeys())
         }
         setStatus({message, type});
       })

@@ -13,7 +13,7 @@ try {
     // create an empty result
     $reply = new stdClass();
     $reply->status = 200;
-    $reply->message = "";
+    $reply->message = null;
     $reply->data = null;
 
     // kick them out if there's no session
@@ -34,7 +34,7 @@ try {
         verifyXsrf();
         $requestContent = file_get_contents("php://input");
         $requestObject = json_decode($requestContent);
-        $delete = filter_input(INPUT_GET, "delete", FILTER_VALIDATE_BOOLEAN);
+        $delete = filter_var($requestObject->delete, FILTER_VALIDATE_BOOLEAN);
         $key = escapeshellarg($requestObject->key);
         if($method === "POST" && $delete === true ) {
             // feed the key to the SSH deleter
