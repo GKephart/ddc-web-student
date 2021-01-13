@@ -1,9 +1,11 @@
 import React from 'react'
 import { SignUpForm } from './SignUpForm/SignUpForm'
+import { StudentNavBar } from '../shared/components/NavBar/StudentNavBar'
 
 export const StudentSignUp = () => {
   return (
     <>
+      <StudentNavBar />
       <div className="container">
         <div className="row">
           <main className=" py-3 content-main col-xs-12 col-md-9">

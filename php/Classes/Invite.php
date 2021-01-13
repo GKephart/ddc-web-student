@@ -391,7 +391,7 @@ INNER JOIN action ON invite.inviteId = action.inviteId";
         $statement->execute();
 
         // build a map of invites and actions
-        $actionInviteMap = new SplObjectStorage();
+        $actionInviteMap = new \SplObjectStorage();
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         while(($row = $statement->fetch()) !== false) {
             try {

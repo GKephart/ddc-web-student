@@ -94,6 +94,7 @@ try {
             verifyXsrf();
             $requestContent = file_get_contents("php://input");
             $requestObject = json_decode($requestContent);
+            $approved = filter_var($requestObject->approved, FILTER_VALIDATE_BOOLEAN);
             $action = new Action(generateUuidV4(), $requestObject->inviteId, $requestObject->approved, $_SESSION["adUser"]->username);
 
             if($action->isApproved() === true) {
@@ -130,6 +131,7 @@ try {
 
 
             if($command === "processed") {
+
                 $actionInviteMap = Invite::getProcessedInvites($pdo);
                 $result = [];
                 foreach($actionInviteMap as $action) {
@@ -186,7 +188,7 @@ try {
         throw(new InvalidArgumentException("invalid class", 400));
     }
 
-} catch (\Exception | TypeError | InvalidArgumentException | RuntimeException $exception) {
+} catch (\Exception | TypeError | InvalidArgumentException | RuntimeException | Error $exception) {
     $reply->status = $exception->getCode();
     $reply->message = $exception->getMessage();
 }

@@ -1,6 +1,18 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchWaitingInvites } from '../../store/invites'
+import { WaitingInviteTableRow } from './WaitingInviteTableRow'
 
 export const InviteApproval = () => {
+  const waitingInvites = useSelector(state => state.invites ? state.invites : []);
+  const dispatch = useDispatch();
+  const initialEffects = () => {
+    dispatch(fetchWaitingInvites())
+  }
+  React.useEffect(initialEffects, [dispatch]);
+  console.log(waitingInvites)
+
+
   return (
     <>
       <main className="container">
@@ -33,22 +45,7 @@ export const InviteApproval = () => {
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <td>invite.inviteId</td>
-              <td>invite.username</td>
-              <td>invite.fullName</td>
-              <td>invite.createDate | date</td>
-              <td>invite.browser (optional)</td>
-              <td>invite.ip (optional)</td>
-              <td>
-                <form className="d-inline-flex px-1">
-                  <button type="submit" className="btn btn-success">A</button>
-                </form>
-                <form className="d-inline-flex px-1">
-                  <button className="btn btn-danger">D</button>
-                </form>
-              </td>
-            </tr>
+            {waitingInvites.map(invite => <WaitingInviteTableRow invite={invite} />)}
             </tbody>
           </table>
         </div>
