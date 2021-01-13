@@ -19,7 +19,7 @@ export const SignUpFormContent = (props) => {
   return (
     <>
       <Form className="py-3 mb-3" onSubmit={handleSubmit}>
-        <h2 className="py-1"> Sign In</h2>
+        <h2 className="py-1 h3"> Sign Up Form</h2>
         <Form.Group>
           <Form.Label>username</Form.Label>
           <InputGroup className="mb-2">
