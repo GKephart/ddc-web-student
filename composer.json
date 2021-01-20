@@ -1,6 +1,6 @@
 {
   "require": {
-    "adldap2/adldap2": "@stable",
+    "directorytree/ldaprecord": "@stable",
     "longman/ip-tools": "@stable",
     "phpunit/dbunit": "@stable",
     "phpunit/phpunit": "@stable",

@@ -6,8 +6,13 @@ require_once(dirname(__DIR__, 3) . "/php/lib/uuid.php");
 require_once(dirname(__DIR__, 3) . "/php/lib/insertAttemptedLogin.php");
 require_once("/etc/nginx/capstone-mysql/Secrets.php");
 
-use Adldap\{Adldap,Connections\Provider};
-use Adldap\Auth\Events\Failed;
+use LdapRecord\{Connection, ConnectionException};
+
+use LdapRecord\Auth\{
+    UsernameRequiredException,
+    PasswordRequiredException,
+    BindException
+};
 
 // prepare an empty reply
 $reply = new stdClass();
@@ -17,7 +22,7 @@ $reply->data = null;
 
 try {
     // verify XSRF token defend against operator error
-    if(session_status() !== PHP_SESSION_ACTIVE) {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
     verifyXsrf();
@@ -25,72 +30,65 @@ try {
     $secrets = new \Secrets("/etc/nginx/capstone-mysql/ddc-web.ini");
     $pdo = $secrets->getPdoObject();
 
-    $adconf = (array) $secrets->getSecret("adconf");
+    $adconf = (array)$secrets->getSecret("adconf");
     $admins = $secrets->getSecret("admins");
+
+    $connection = new Connection($adconf);
+
     $requestContent = file_get_contents("php://input");
     $requestObject = json_decode($requestContent);
 
-
     $username = strtolower(filter_var($requestObject->username, FILTER_SANITIZE_STRING));
-    $password = $requestObject->password;
+    if(isset($username) === false) {
+        throw(new \InvalidArgumentException( "please provide a valid username", 401));
+    }    $password = $requestObject->password;
 
-    $provider = new Provider($adconf);
-    $activeDirectory = new Adldap();
-    $activeDirectory->addProvider($provider, "CNM");
-    $activeDirectory->setDefaultProvider("CNM");
-    $activeDirectory->connect();
 
-    $d = Adldap::getEventDispatcher();
+    $user = $connection->query()
+        ->where('samaccountname', '=', $username)
+        ->first();
+    if($user === null) {
+        throw(new RuntimeException("invalid username or password", 401));
+    }
+    $result = $connection->auth()->attempt($user["distinguishedname"][0], $password, true);
 
-//    $d->listen(Failed::class, function (Failed $event) {
-//        $conn = $event->getConnection();
-//        if ($error = $conn->getDetailedError()) {
-//            echo  $error->getErrorCode() . PHP_EOL;
-//            echo $error->getErrorMessage() . PHP_EOL;
-//            echo $error->getDiagnosticMessage() . PHP_EOL;
-//        }
-//    });
-//
+    $createDate = new DateTime();
 
-   $result = $activeDirectory->auth()->attempt("$username@cnm.edu", $password, true);
-   $createDate = new DateTime();
+    $parameters = [
+        "attemptedLoginId" => generateUuidV4()->getBytes(),
+        "attemptedLoginUsername" => $username,
+        "attemptedLoginResult" => (string)$result,
+        "createDate" => $createDate->format("Y-m-d H:i:s.u"),
+        "ip" => $_SERVER["REMOTE_ADDR"],
+        "browser" => $_SERVER["HTTP_USER_AGENT"]
+    ];
 
-   $parameters = [
-       "attemptedLoginId"=>generateUuidV4()->getBytes(),
-       "attemptedLoginUsername" =>$username,
-       "attemptedLoginResult"=> (string)$result,
-       "createDate" =>$createDate->format("Y-m-d H:i:s.u"),
-       "ip" => $_SERVER["REMOTE_ADDR"],
-       "browser" => $_SERVER["HTTP_USER_AGENT"]
-       ];
-   
- insertAttemptedLogin($pdo, $parameters);
+    insertAttemptedLogin($pdo, $parameters);
+
     if ($result === true) {
+        $isAdmin = in_array($username, $admins->adminsList);
 
-        $search = $provider->search();
-        $search->select(["displayname", "employeeid"]);
-        $result = $search->findBy("samaccountname",$username);
-        $isAdmin = in_array( $username, $admins->adminsList);
-
-        $adUser= (object) [
-            "fullName" => $result->getDisplayName(),
+        $adUser = (object)[
+            "fullName" => $user["cn"][0],
             "loginTime" => time(),
             "username" => $username,
-            "isAdmin"=> $isAdmin
+            "isAdmin" => $isAdmin
         ];
 
         setJwtAndAuthHeader("auth", $adUser);
-        $adUser->studentId = $result->getEmployeeId();
-        $_SESSION["adUser"] = $adUser;
-        $reply->message= "Sign in was successful";
 
-    } else{
+        $adUser->studentId = $user["employeeid"][0];
+        $_SESSION["adUser"] = $adUser;
+        $reply->message = "Sign in was successful";
+
+    } else {
         throw(new RuntimeException("invalid username or password", 401));
     }
-}catch(Adldap\Auth\UsernameRequiredException | Adldap\Auth\PasswordRequiredException | Adldap\Auth\BindException | Exception  | RuntimeException | Error $exception ) {
+} catch (Exception | RuntimeException | InvalidArgumentException $exception) {
     $reply->status = $exception->getCode();
     $reply->message = $exception->getMessage();
 }
+
 // encode and return reply to front end caller
 header("Content-type: application/json");
 
