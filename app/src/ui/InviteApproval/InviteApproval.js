@@ -7,9 +7,14 @@ export const InviteApproval = () => {
   const [isDetailedDataDisplayed, setIsDetailedDataDisplayed] = React.useState(false)
   const waitingInvites = useSelector(state => state.invites ? state.invites : []);
   const dispatch = useDispatch();
+
+  const [inviteApprovalStatus, setInviteApprovalStatus] = React.useState(null)
+
   const initialEffects = () => {
     dispatch(fetchWaitingInvites())
   }
+
+  console.log(waitingInvites)
   React.useEffect(initialEffects, [dispatch]);
 
   return (
@@ -32,9 +37,9 @@ export const InviteApproval = () => {
           </div>
         </div>
 
-          {waitingInvites.length > 1
-            ? <>
-              <div className="table-responsive">
+        {waitingInvites.length > 0
+          ? <>
+            <div className="table-responsive">
               <table className="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -46,8 +51,8 @@ export const InviteApproval = () => {
                     isDetailedDataDisplayed === true &&
                     <>
                       <th>Invitee Id</th>
-                      <th>Invitee Browser </th>
-                      <th>Invitee IP Address </th>
+                      <th>Invitee Browser</th>
+                      <th>Invitee IP Address</th>
                     </>
                   }
                   <th>Action</th>
@@ -57,23 +62,36 @@ export const InviteApproval = () => {
                 {waitingInvites.map(invite => <WaitingInviteTableRow
                   invite={invite}
                   isDetailedDataDisplayed={isDetailedDataDisplayed}
+                  setInviteApprovalStatus={setInviteApprovalStatus}
                   key={invite.inviteId}
+
                 />)
                 }
                 </tbody>
               </table>
             </div>
-            </>
-            : <>
-              <div className="row">
-                <div className="col-12">
-                  <div className="alert alert-warning">
-                    No waiting invites found <span role="img" aria-label="popper emoji">🎉</span>
-                  </div>
+            <div className="row">
+              <div className="col-12">
+                {
+                  inviteApprovalStatus !== null && (
+                    <>
+                      <div className={inviteApprovalStatus.type}>{inviteApprovalStatus.message}</div>
+                    </>
+                  )
+                }
+              </div>
+            </div>
+          </>
+          : <>
+            <div className="row">
+              <div className="col-12">
+                <div className="alert alert-warning">
+                  No waiting invites found <span role="img" aria-label="popper emoji">🎉</span>
                 </div>
               </div>
-            </>
-          }
+            </div>
+          </>
+        }
         <div className="row">
           <div className="col-12">
             <h2 className="h3">Past Invites</h2>
