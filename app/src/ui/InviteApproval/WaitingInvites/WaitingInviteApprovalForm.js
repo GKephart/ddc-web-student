@@ -1,11 +1,11 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Formik } from 'formik'
-import { httpConfig } from '../../utils/http-config'
-import { fetchWaitingInvites } from '../../store/waitingInvites'
+import { httpConfig } from '../../../utils/http-config'
 import { useDispatch } from 'react-redux'
+import { fetchWaitingInvites } from '../../../store/waitingInvites'
 
-export function InviteApprovalForm (props) {
+export function WaitingInviteApprovalForm (props) {
   const {inviteId,setInviteApprovalStatus} = props
   const dispatch = useDispatch()
 

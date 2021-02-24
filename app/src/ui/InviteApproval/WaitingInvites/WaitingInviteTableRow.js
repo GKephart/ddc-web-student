@@ -1,5 +1,5 @@
 import React from 'react'
-import { InviteApprovalForm } from './InviteApprovalForm'
+import {WaitingInviteApprovalForm} from './WaitingInviteApprovalForm'
 
 export function WaitingInviteTableRow (props) {
 
@@ -26,7 +26,7 @@ export function WaitingInviteTableRow (props) {
       }
       <td className="align-content-center">
 
-        <InviteApprovalForm
+        <WaitingInviteApprovalForm
           inviteId={invite.inviteId}
           setInviteApprovalStatus={setInviteApprovalStatus}
         />
