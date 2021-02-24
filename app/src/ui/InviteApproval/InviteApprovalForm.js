@@ -2,7 +2,7 @@ import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Formik } from 'formik'
 import { httpConfig } from '../../utils/http-config'
-import { fetchWaitingInvites } from '../../store/invites'
+import { fetchWaitingInvites } from '../../store/waitingInvites'
 import { useDispatch } from 'react-redux'
 
 export function InviteApprovalForm (props) {

@@ -374,7 +374,6 @@ class Invite implements \JsonSerializable {
         }
         return($invites);
     }
-
     /**
      * maps all invites that have been processed to the action that was taken
      *
@@ -382,7 +381,7 @@ class Invite implements \JsonSerializable {
      * @return SplObjectStorage map from actions to invites
      * @throws PDOException when mySQL related errors occur
      **/
-    public static function getProcessedInvites(PDO $pdo) : \SplObjectStorage {
+    public static function getProcessedInvites(PDO $pdo) : SplFixedArray {
         // create query template
         $query = "SELECT invite.inviteId, createDate, username, fullName, browser, ip, actionId, approved, actionDate, actionUser
 FROM invite
@@ -391,18 +390,27 @@ INNER JOIN action ON invite.inviteId = action.inviteId";
         $statement->execute();
 
         // build a map of invites and actions
-        $actionInviteMap = new \SplObjectStorage();
+
+        $processedInvites = new SplFixedArray($statement->rowCount());
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         while(($row = $statement->fetch()) !== false) {
+
             try {
                 $action = new Action($row["actionId"], $row["inviteId"], $row["approved"], $row["actionUser"], $row["actionDate"]);
                 $invite = new Invite($row["inviteId"], $row["username"], $row["fullName"], $row["browser"], $row["ip"], $row["createDate"]);
-                $actionInviteMap->attach($action, $invite);
-            } catch(Exception $exeption) {
-                throw(new PDOException($exeption->getMessage(), 0, $exeption));
+                $processedInvite = (object) [
+                    "action" => $action,
+                    "invite" => $invite
+                ];
+
+                $processedInvites[$processedInvites->key()] = $processedInvite;
+                $processedInvites->next();
+
+            } catch(Exception $exception) {
+                throw(new PDOException($exception->getMessage(), 0, $exception));
             }
         }
-        return($actionInviteMap);
+        return($processedInvites);
     }
 
     /**

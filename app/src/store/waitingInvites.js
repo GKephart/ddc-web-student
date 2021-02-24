@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { httpConfig } from '../utils/http-config'
 
 const slice = createSlice({
-  name:"invites",
+  name:"waitingInvites",
   initialState: [],
   reducers: {
     setWaitingInvites: (invites, action) => {

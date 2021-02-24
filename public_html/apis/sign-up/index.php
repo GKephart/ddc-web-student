@@ -131,14 +131,7 @@ try {
 
 
             if($command === "processed") {
-
-                $actionInviteMap = Invite::getProcessedInvites($pdo);
-                $result = [];
-                foreach($actionInviteMap as $action) {
-                    $action->setInvite($actionInviteMap->getInfo());
-                    $result[] = $action;
-                }
-                $reply->data = $result;
+                $reply->data = Invite::getProcessedInvites($pdo)->toArray();
                 // report all waiting invites
             } else if($command === "waiting") {
                 $reply->data = Invite::getWaitingInvites($pdo)->toArray();
