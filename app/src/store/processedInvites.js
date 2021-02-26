@@ -18,4 +18,4 @@ export const fetchProcessedInvites = () => async (dispatch) => {
   dispatch(setProcessedInvites(data))
 }
 
-export default slice.reduce
+export default slice.reducer
