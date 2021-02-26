@@ -12,10 +12,7 @@ export function WaitingInvites (props) {
     <>
       <div className="row">
         <div className="col-12">
-          <h1 className="h2 py-3">
-            Invite Approval For Incoming Students
-          </h1>
-
+          <h2 className="h3 py-2">Invites Awaiting Action</h2>
           <div className=" form-check">
             <input className="form-check-input" type="checkbox" name="agree" id="agree" value="true"
                    onClick={() => {setIsDetailedDataDisplayed(!isDetailedDataDisplayed)}}/>
@@ -23,7 +20,6 @@ export function WaitingInvites (props) {
               Show more detailed data
             </label>
           </div>
-          <h2 className="h3 py-2">Invites Awaiting Action</h2>
         </div>
       </div>
 

@@ -22,7 +22,13 @@ export const InviteApproval = () => {
   return (
     <>
       <main className="container">
-
+        <div className="row">
+          <div className="col-12">
+            <h1 className="h2 py-3">
+              Invite Approval For Incoming Students
+            </h1>
+          </div>
+        </div>
         <WaitingInvites
           waitingInvites={waitingInvites}
         />

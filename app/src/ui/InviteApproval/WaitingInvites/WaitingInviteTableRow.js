@@ -1,14 +1,11 @@
 import React from 'react'
 import {WaitingInviteApprovalForm} from './WaitingInviteApprovalForm'
+import { dateTime } from '../../../utils/dateTime'
 
 export function WaitingInviteTableRow (props) {
 
   const {invite, isDetailedDataDisplayed, setInviteApprovalStatus} = props
 
-  const dateTime = (milliSeconds) => {
-    const date = new Date(milliSeconds)
-    return date.toLocaleString()
-  }
 
   return (
     <>
