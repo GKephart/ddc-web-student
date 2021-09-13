@@ -14,7 +14,7 @@ require_once(dirname(dirname(__DIR__)) . "/vendor/autoload.php");
  * @throws InvalidArgumentException when required fields are omitted or null
  * @throws RuntimeException if SwiftMailer cannot send the Email
  **/
-function sendEmail($fromAddress, $fromName, $toAddress, $toName, $subject, $message, $isHTML = true) {
+function sendEmail(string $fromAddress, string $fromName = null, $toAddress, $toName, $subject, $message, $isHTML = true) {
     // verify required fields are present
     if(empty($fromAddress) === true) {
         throw(new InvalidArgumentException("from address is required"));

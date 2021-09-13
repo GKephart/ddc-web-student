@@ -84,7 +84,7 @@ try {
     } else {
         throw(new RuntimeException("invalid username or password", 401));
     }
-} catch (Exception | RuntimeException | InvalidArgumentException $exception) {
+} catch (Exception | RuntimeException | InvalidArgumentException|  Error $exception) {
     $reply->status = $exception->getCode();
     $reply->message = $exception->getMessage();
 }

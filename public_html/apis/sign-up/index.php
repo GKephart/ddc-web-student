@@ -12,26 +12,26 @@ use DdcFullstack\DdcWebStudent\Invite;
 use Ramsey\Uuid\Uuid;
 
 // set Email configuration parameters
-$fromAddress = "pschulzetenber@cnm.edu";
-$fromName = "Paul Schulzetenberg";
+$fromAddress = "no_reply_ddfullstack@cnm.edu";
+$fromName = "Deep Dive Fullstack Bootcamp";
 
 $inviteCreatedSubject = "Invite Request From --FULL_NAME--";
 
 $inviteCreatedMessage = <<< EOF
 <h1>Invite Request From --FULL_NAME--</h1>
 <p>--FULL_NAME-- &lt;--USERNAME--@cnm.edu&gt; has requested an invite to the CNM STEMulus Deep Dive Coding Bootcamp Server. Please accept or decline their invite at:<br />
-<a href="https://bootcamp-coders.cnm.edu/invite-admin/">https://bootcamp-coders.cnm.edu/invite-admin/</a></p>
+<a href="https://ddc-web-student.cnm.edu/invite-approval">invite Approvl</a></p>
 <p>Thank you,<br />
 $fromName</p>
 EOF;
 
 // set Email template for an accepted invited
-$inviteAcceptedSubject = "Welcome to the CNM STEMulus Deep Dive Coding Bootcamp Server, --FULL_NAME--";
+$inviteAcceptedSubject = "Welcome to the Deep Dive Fullstack Student Server, --FULL_NAME--";
 $inviteAcceptedMessage = <<< EOF
 <h1>Account for the CNM STEMulus Deep Dive Coding Bootcamp Server Accepted</h1>
 <p>Dear --FULL_NAME--:</p>
 <p>Thank you for your request for an account on the CNM STEMulus Deep Dive Coding Bootcamp Server. Your request has been accepted by an administrator. You may now login and continue with the setup screencasts at:<br />
-<a href="https://bootcamp-coders.cnm.edu/screencasts/prework/">https://bootcamp-coders.cnm.edu/screencasts/prework/</a></p>
+<a href="https://ddc-web-curriculum.cnm.edu/prework/"><https://ddc-web-curriculum.cnm.edu/prework</a></p>
 <p>Please continue to work through the prework as completely as possible to get up to speed and to maximize your chances of success in the class. Don't hesitate to reach out if you have any questions.</p>
 <p>Thank you,<br />
 $fromName<br />
@@ -114,7 +114,7 @@ try {
                 $recipientName = $invite->getFullName();
                 $inviteAcceptedSubject = str_replace("--FULL_NAME--", $recipientName, $inviteAcceptedSubject);
                 $inviteAcceptedMessage = str_replace("--FULL_NAME--", $recipientName, $inviteAcceptedMessage);
-               // sendEmail($fromAddress, $fromName, $recipientAddress, $recipientName, $inviteAcceptedSubject, $inviteAcceptedMessage);
+                sendEmail($fromAddress, $fromName, $recipientAddress, $recipientName, $inviteAcceptedSubject, $inviteAcceptedMessage);
             }
 
             $action->insert($pdo);
@@ -173,7 +173,7 @@ try {
             $inviteCreatedSubject = str_replace("--FULL_NAME--", $_SESSION["adUser"]->fullName, $inviteCreatedSubject);
             $inviteCreatedMessage = str_replace("--FULL_NAME--", $_SESSION["adUser"]->fullName, $inviteCreatedMessage);
             $inviteCreatedMessage = str_replace("--USERNAME--", $_SESSION["adUser"]->username, $inviteCreatedMessage);
-            // sendEmail($fromAddress, $fromName, $adminEmails, null, $inviteCreatedSubject, $inviteCreatedMessage);
+           sendEmail($fromAddress, $fromName, $adminEmails, null, $inviteCreatedSubject, $inviteCreatedMessage);
             $reply->message = "Invite successfully submitted. You will receive an Email in your CNM Email if your invite is approved by a program administrator.";
             $invite->insert($pdo);
         }
