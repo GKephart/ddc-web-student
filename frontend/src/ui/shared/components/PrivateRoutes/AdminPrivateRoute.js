@@ -14,10 +14,14 @@ export function AdminPrivateRoute ({children}) {
 
   const {authenticatedUser, isLoading} = useJwtToken()
 
+  const isUserAuthenticated = authenticatedUser?.isAdmin ?? false
+  console.log(isUserAuthenticated)
+
   if(isLoading === true) {
     return <IsLoading />
 
-  } else if(  authenticatedUser?.isAdmin === false) {
+
+  } else if(isUserAuthenticated === false) {
     return <HandleRedirect />
   }
 
