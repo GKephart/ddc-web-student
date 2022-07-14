@@ -21,12 +21,10 @@ export const SignInContent = (props) => {
         <Form.Group>
           <Form.Label>username</Form.Label>
           <InputGroup className="mb-3">
-            <InputGroup.Prepend>
+
             <InputGroup.Text >
               <FontAwesomeIcon icon="envelope"/>
             </InputGroup.Text>
-            </InputGroup.Prepend>
-
             <FormControl
               placeholder=" CNM Username"
               aria-label="Username"
@@ -53,11 +51,10 @@ export const SignInContent = (props) => {
         <Form.Group>
           <Form.Label>Password</Form.Label>
           <InputGroup className="mb-3">
-            <InputGroup.Prepend>
+
               <InputGroup.Text >
               <FontAwesomeIcon icon="key"/>
               </InputGroup.Text>
-            </InputGroup.Prepend>
             <FormControl
               type="password"
               placeholder="password"
