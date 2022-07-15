@@ -28,7 +28,7 @@ function verifyActiveDirectoryLogin() {
 
 /**
  *
- * verifies whether the use is logged in *AND* is an administrator
+ * verifies whether the user is logged in *AND* is an administrator
  * this function can be used as drop in replacement for verifyActiveDirectoryLogin
  *
  * @see verifyActiveDirectoryLogin
