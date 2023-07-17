@@ -1,9 +1,9 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Formik } from 'formik'
-import { httpConfig } from '../../../utils/http-config'
+import { httpConfig } from '../../../utils/http-config.js'
 import { useDispatch } from 'react-redux'
-import { fetchWaitingInvites } from '../../../store/waitingInvites'
+import { fetchWaitingInvites } from '../../../store/waitingInvites.js'
 
 export function WaitingInviteApprovalForm (props) {
   const { inviteId, setInviteApprovalStatus } = props

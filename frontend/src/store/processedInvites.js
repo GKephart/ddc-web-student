@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { httpConfig } from '../utils/http-config'
+import { httpConfig } from '../utils/http-config.js'
 
 const slice = createSlice({
   name: 'processedInvites',

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StudentNavBar } from '../shared/components/NavBar/NavBar'
+import { StudentNavBar } from '../shared/components/NavBar/NavBar.jsx'
 
 export const FourOhFour = () => {
 

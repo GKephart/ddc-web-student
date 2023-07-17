@@ -1,6 +1,6 @@
 import React from 'react'
-import { SignUpForm } from './SignUpForm/SignUpForm'
-import { NavBar } from '../shared/components/NavBar/NavBar'
+import { SignUpForm } from './SignUpForm/SignUpForm.jsx'
+import { NavBar } from '../shared/components/NavBar/NavBar.jsx'
 
 export const StudentSignUp = () => {
   return (

@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteUser, fetchUsers } from '../../store/users'
+import { deleteUser, fetchUsers } from '../../store/users.js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Modal, Navbar } from 'react-bootstrap'
-import { NavBar } from '../shared/components/NavBar/NavBar'
-import { httpConfig } from '../../utils/http-config'
+import { NavBar } from '../shared/components/NavBar/NavBar.jsx'
+import { httpConfig } from '../../utils/http-config.js'
 import { Formik } from 'formik'
 import { object, string } from 'yup'
 

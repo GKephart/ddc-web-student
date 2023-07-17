@@ -1,11 +1,11 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchWaitingInvites } from '../../store/waitingInvites'
+import { fetchWaitingInvites } from '../../store/waitingInvites.js'
 
-import { WaitingInvites } from './WaitingInvites/WaitingInvites'
-import { fetchProcessedInvites } from '../../store/processedInvites'
-import { ProcessedInvites } from './ProcessedInvites/ProcessedInvites'
-import { NavBar } from '../shared/components/NavBar/NavBar'
+import { WaitingInvites } from './WaitingInvites/WaitingInvites.jsx'
+import { fetchProcessedInvites } from '../../store/processedInvites.js'
+import { ProcessedInvites } from './ProcessedInvites/ProcessedInvites.jsx'
+import { NavBar } from '../shared/components/NavBar/NavBar.jsx'
 
 export const InviteApproval = () => {
   const waitingInvites = useSelector(state => state.waitingInvites ? state.waitingInvites : [])

@@ -1,6 +1,6 @@
 import React from 'react'
-import { WaitingInviteApprovalForm } from './WaitingInviteApprovalForm'
-import { dateTime } from '../../../utils/dateTime'
+import { WaitingInviteApprovalForm } from './WaitingInviteApprovalForm.jsx'
+import { dateTime } from '../../../utils/dateTime.js'
 
 export function WaitingInviteTableRow (props) {
   const { invite, isDetailedDataDisplayed, setInviteApprovalStatus } = props

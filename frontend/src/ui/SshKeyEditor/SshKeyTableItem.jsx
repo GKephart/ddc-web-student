@@ -1,8 +1,8 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { httpConfig } from '../../utils/http-config'
+import { httpConfig } from '../../utils/http-config.js'
 import { useDispatch } from 'react-redux'
-import { deleteSshKey } from '../../store/key'
+import { deleteSshKey } from '../../store/key.js'
 
 export function SshKeyTableItem (props) {
   const { sshKey, setMessage } = props

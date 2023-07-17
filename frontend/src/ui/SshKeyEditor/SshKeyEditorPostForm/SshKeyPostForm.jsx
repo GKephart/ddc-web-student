@@ -3,9 +3,9 @@ import React from 'react'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch } from 'react-redux'
-import { httpConfig } from '../../../utils/http-config'
-import { SshKeyPostFormContent } from './SshKeyPostFormContent'
-import { fetchSshKeys } from '../../../store/key'
+import { httpConfig } from '../../../utils/http-config.js'
+import { SshKeyPostFormContent } from './SshKeyPostFormContent.jsx'
+import { fetchSshKeys } from '../../../store/key.js'
 
 export const SshKeyPostForm = () => {
   const dispatch = useDispatch()

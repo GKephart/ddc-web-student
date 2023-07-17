@@ -1,9 +1,9 @@
 import React from 'react'
-import { SshKeyPostForm } from './SshKeyEditorPostForm/SshKeyPostForm'
+import { SshKeyPostForm } from './SshKeyEditorPostForm/SshKeyPostForm.jsx'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchSshKeys } from '../../store/key'
-import { SshKeyTableItem } from './SshKeyTableItem'
-import { NavBar } from '../shared/components/NavBar/NavBar'
+import { fetchSshKeys } from '../../store/key.js'
+import { SshKeyTableItem } from './SshKeyTableItem.jsx'
+import { NavBar } from '../shared/components/NavBar/NavBar.jsx'
 
 export const SshKeyEditor = () => {
   const keys = useSelector(state => state.keys ? state.keys : [])

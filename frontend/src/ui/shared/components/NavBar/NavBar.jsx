@@ -3,9 +3,9 @@ import logo from '../../imgs/logo.png'
 import { Link } from 'react-router-dom'
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { httpConfig } from '../../../../utils/http-config'
-import { getAuth } from '../../../../store/auth'
-import { useJwtToken } from '../../useJwtToken'
+import { httpConfig } from '../../../../utils/http-config.js'
+import { getAuth } from '../../../../store/auth.js'
+import { useJwtToken } from '../../useJwtToken.jsx'
 
 
 export function NavBar () {

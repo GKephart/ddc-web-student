@@ -1,8 +1,8 @@
 
 import React from 'react'
-import { useJwtToken } from '../../useJwtToken'
-import { IsLoading } from './IsLoading'
-import { HandleRedirect } from './HandleRedirect'
+import { useJwtToken } from '../../useJwtToken.jsx'
+import { IsLoading } from './IsLoading.jsx'
+import { HandleRedirect } from './HandleRedirect.jsx'
 
 /**
  * A higher order component that checks if a user is signed in (auth is set in redux with a valid JWT and the isAdmin state variable is true) as an admin. If the user is signed in as an admin they get redirected to the protected route, else the user is redirected to the login page.

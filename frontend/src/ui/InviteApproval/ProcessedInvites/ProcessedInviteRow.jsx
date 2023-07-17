@@ -1,5 +1,5 @@
 import React from 'react'
-import { dateTime } from '../../../utils/dateTime'
+import { dateTime } from '../../../utils/dateTime.js'
 
 export function ProcessedInviteRow (props) {
   const { action, invite, isDetailedDataDisplayed } = props

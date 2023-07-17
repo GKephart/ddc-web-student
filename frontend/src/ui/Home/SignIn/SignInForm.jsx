@@ -2,10 +2,10 @@ import React from 'react'
 import { httpConfig } from '../../../utils/http-config'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
-import { SignInContent } from './SignInContent'
+import { SignInContent } from './SignInContent.jsx'
 import { useDispatch } from 'react-redux'
 import jwtDecode from 'jwt-decode'
-import { getAuth } from '../../../store/auth'
+import { getAuth } from '../../../store/auth.js'
 import { useNavigate } from 'react-router-dom'
 
 export const SignInForm = () => {

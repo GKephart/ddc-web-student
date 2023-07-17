@@ -1,8 +1,8 @@
 import React from 'react'
-import { httpConfig } from '../../../utils/http-config'
+import { httpConfig } from '../../../utils/http-config.js'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
-import { SignUpFormContent } from './SignUpFormContent'
+import { SignUpFormContent } from './SignUpFormContent.jsx'
 
 export const SignUpForm = () => {
   const validator = Yup.object().shape({

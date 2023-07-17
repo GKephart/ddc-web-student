@@ -1,6 +1,6 @@
 import React from 'react'
-import { ProcessedInviteRow } from './ProcessedInviteRow'
-import { WaitingInviteTableRow } from '../WaitingInvites/WaitingInviteTableRow'
+import { ProcessedInviteRow } from './ProcessedInviteRow.jsx'
+import { WaitingInviteTableRow } from '../WaitingInvites/WaitingInviteTableRow.jsx'
 
 export function ProcessedInvites (props) {
   const { processedInvites } = props

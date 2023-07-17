@@ -1,5 +1,5 @@
 import React from 'react'
-import { WaitingInviteTableRow } from './WaitingInviteTableRow'
+import { WaitingInviteTableRow } from './WaitingInviteTableRow.jsx'
 
 export function WaitingInvites (props) {
   const { waitingInvites } = props
