@@ -1,19 +1,18 @@
-import React from "react"
+import React from 'react'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import { Col } from 'react-bootstrap'
 import { SignInForm } from './SignIn/SignInForm'
-import { StudentNavBar } from '../shared/components/NavBar/StudentNavBar'
+import { NavBar } from '../shared/components/NavBar/NavBar'
 
 export const Home = () => {
-
   return (
     <>
-      <StudentNavBar />
+     <NavBar />
       <Container>
         <Row>
-          <Col md={{span: 6, offset: 3}}>
-            <SignInForm/>
+          <Col md={{ span: 6, offset: 3 }}>
+            <SignInForm />
           </Col>
         </Row>
       </Container>

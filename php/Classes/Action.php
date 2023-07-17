@@ -363,11 +363,13 @@ class Action implements \JsonSerializable {
         // build an array of actions
         $actions = new \SplFixedArray($statement->rowCount());
         $statement->setFetchMode(PDO::FETCH_ASSOC);
+        $currentIterator = $actions->getIterator();
         while(($row = $statement->fetch()) !== false) {
             try {
                 $action = new Action($row["actionId"], $row["inviteId"], $row["approved"], $row["actionUser"], $row["actionDate"]);
-                $actions[$actions->key()] = $action;
-                $actions->next();
+
+                $actions[$currentIterator->key()] = $action;
+                $currentIterator->next();
             } catch(Exception $exception) {
                 throw(new PDOException($exception->getMessage(), 0, $exception));
             }

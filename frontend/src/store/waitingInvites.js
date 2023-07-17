@@ -1,8 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit'
 import { httpConfig } from '../utils/http-config'
 
 const slice = createSlice({
-  name:"waitingInvites",
+  name: 'waitingInvites',
   initialState: [],
   reducers: {
     setWaitingInvites: (invites, action) => {
@@ -11,10 +11,10 @@ const slice = createSlice({
   }
 })
 
-export const{setWaitingInvites} = slice.actions
+export const { setWaitingInvites } = slice.actions
 
 export const fetchWaitingInvites = () => async (dispatch) => {
-  const {data} = await httpConfig.get("/apis/sign-up/?class=invite&command=waiting")
+  const { data } = await httpConfig.get('/apis/sign-up/?class=invite&command=waiting')
   dispatch(setWaitingInvites(data))
 }
 

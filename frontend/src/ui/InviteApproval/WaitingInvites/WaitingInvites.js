@@ -2,21 +2,22 @@ import React from 'react'
 import { WaitingInviteTableRow } from './WaitingInviteTableRow'
 
 export function WaitingInvites (props) {
-
-  const {waitingInvites} = props
+  const { waitingInvites } = props
 
   const [isDetailedDataDisplayed, setIsDetailedDataDisplayed] = React.useState(false)
   const [inviteApprovalStatus, setInviteApprovalStatus] = React.useState(null)
 
-  return(
+  return (
     <>
-      <div className="row">
-        <div className="col-12">
-          <h2 className="h3 py-2">Invites Awaiting Action</h2>
-          <div className=" form-check">
-            <input className="form-check-input" type="checkbox" name="agree" id="agree" value="true"
-                   onClick={() => {setIsDetailedDataDisplayed(!isDetailedDataDisplayed)}}/>
-            <label className="form-check-label">
+      <div className='row'>
+        <div className='col-12'>
+          <h2 className='h3 py-2'>Invites Awaiting Action</h2>
+          <div className=' form-check'>
+            <input
+              className='form-check-input' type='checkbox' name='agree' id='agree' value='true'
+              onClick={() => { setIsDetailedDataDisplayed(!isDetailedDataDisplayed) }}
+            />
+            <label className='form-check-label'>
               Show more detailed data
             </label>
           </div>
@@ -25,39 +26,37 @@ export function WaitingInvites (props) {
 
       {waitingInvites.length > 0
         ? <>
-          <div className="table-responsive">
-            <table className="table table-bordered table-striped">
+          <div className='table-responsive'>
+            <table className='table table-bordered table-striped'>
               <thead>
-              <tr>
+                <tr>
 
-                <th>Invitee Username</th>
-                <th>Invitee Full Name</th>
-                <th>Invitee Date</th>
-                {
+                  <th>Invitee Username</th>
+                  <th>Invitee Full Name</th>
+                  <th>Invitee Date</th>
+                  {
                   isDetailedDataDisplayed === true &&
-                  <>
-                    <th>Invitee Id</th>
-                    <th>Invitee Browser</th>
-                    <th>Invitee IP Address</th>
-                  </>
+                    <>
+                      <th>Invitee Id</th>
+                      <th>Invitee Browser</th>
+                      <th>Invitee IP Address</th>
+                    </>
                 }
-                <th>Action</th>
-              </tr>
+                  <th>Action</th>
+                </tr>
               </thead>
               <tbody>
-              {waitingInvites.map(invite => <WaitingInviteTableRow
-                invite={invite}
-                isDetailedDataDisplayed={isDetailedDataDisplayed}
-                setInviteApprovalStatus={setInviteApprovalStatus}
-                key={invite.inviteId}
-
-              />)
-              }
+                {waitingInvites.map(invite => <WaitingInviteTableRow
+                  invite={invite}
+                  isDetailedDataDisplayed={isDetailedDataDisplayed}
+                  setInviteApprovalStatus={setInviteApprovalStatus}
+                  key={invite.inviteId}
+                                              />)}
               </tbody>
             </table>
           </div>
-          <div className="row">
-            <div className="col-12">
+          <div className='row'>
+            <div className='col-12'>
               {
                 inviteApprovalStatus !== null && (
                   <>
@@ -69,15 +68,14 @@ export function WaitingInvites (props) {
           </div>
         </>
         : <>
-          <div className="row">
-            <div className="col-12">
-              <div className="alert alert-warning">
-                No waiting invites found <span role="img" aria-label="popper emoji">🎉</span>
+          <div className='row'>
+            <div className='col-12'>
+              <div className='alert alert-warning'>
+                No waiting invites found <span role='img' aria-label='popper emoji'>🎉</span>
               </div>
             </div>
           </div>
-        </>
-      }
+        </>}
 
     </>
   )

@@ -15,15 +15,12 @@ import { HandleRedirect } from './HandleRedirect'
  * @returns {JSX.Element} Either the protected component or a react router redirect depending if the user is logged in.
  * @constructor
  */
-export function StudentPrivateRoute ({children}){
+export function StudentPrivateRoute ({ children }) {
+  const { authenticatedUser, isLoading } = useJwtToken()
 
-  const {authenticatedUser, isLoading} = useJwtToken()
-
-
-  if(isLoading === true) {
+  if (isLoading === true) {
     return <IsLoading />
-
-  } else if(  authenticatedUser === null) {
+  } else if (authenticatedUser === null) {
     return <HandleRedirect />
   }
 

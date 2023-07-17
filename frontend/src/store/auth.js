@@ -1,9 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
-import jwt_decode from "jwt-decode";
-
+import { createSlice } from '@reduxjs/toolkit'
+import jwt_decode from 'jwt-decode'
 
 const slice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState: null,
   reducers: {
     getAuth: (auth, action) => {
@@ -12,20 +11,19 @@ const slice = createSlice({
   }
 })
 
-export const {getAuth} = slice.actions
+export const { getAuth } = slice.actions
 
 export const fetchAuth = () => async (dispatch, getState) => {
   const state = getState()
 
   if (state.auth === null) {
-    const token = window.localStorage.getItem("authorization")
+    const token = window.localStorage.getItem('authorization')
     let decodedToken = token ? jwt_decode(token) : null
-    if (decodedToken?.exp < Math.round( new Date() / 1000)){
+    if (decodedToken?.exp < Math.round(new Date() / 1000)) {
       decodedToken = null
     }
     dispatch(getAuth(decodedToken))
   }
-
-};
+}
 
 export default slice.reducer

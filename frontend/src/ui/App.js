@@ -14,7 +14,7 @@ import { UserAdmin } from './UserAdmin/UserAdmin'
 import { Home } from './Home/Home'
 import { FourOhFour } from './FourOhFour/FourOhFour'
 
-library.add(faEnvelope, faKey, faTrash, faCheck, faBan)
+library.add(faEnvelope, faKey, faTrash, faCheck, faBan, faTrash)
 
 export const App = ({ store }) => {
   httpConfig.get('/apis/earl-grey/')
@@ -28,40 +28,39 @@ export const App = ({ store }) => {
           <BrowserRouter>
             <Routes>
               <Route
-                exact={true}
-                path={'/ssh-key-editor'}
+                exact
+                path='/ssh-key-editor'
                 element={
                   <StudentPrivateRoute>
-                    <SshKeyEditor/>
+                    <SshKeyEditor />
                   </StudentPrivateRoute>
                 }
               />
-              <Route path={'/admin/user-admin'} element={<>
+              <Route
+                path='/admin/user-admin' element={<>
 
-                <AdminPrivateRoute>
-                  <UserAdmin/>
-                </AdminPrivateRoute>
-              </>}>
+                  <AdminPrivateRoute>
+                    <UserAdmin />
+                  </AdminPrivateRoute>
+                </>}
+              />
+              <Route
+                path='/admin/invite-approval' element={<>
 
-              </Route>
-              <Route path={'/admin/invite-approval'} element={<>
-
-                <AdminPrivateRoute>
-                  <InviteApproval/>
-                </AdminPrivateRoute>
-              </>}>
-
-              </Route>
-
+                  <AdminPrivateRoute>
+                    <InviteApproval />
+                  </AdminPrivateRoute>
+                </>}
+              />
 
               <Route
                 exact
-                path="/sign-up"
-                element={<StudentSignUp/>}
+                path='/sign-up'
+                element={<StudentSignUp />}
               />
 
-              <Route exact path="/" element={<Home/>}/>
-              <Route path="*" element={<FourOhFour/>}/>
+              <Route exact path='/' element={<Home />} />
+              <Route path='*' element={<FourOhFour />} />
             </Routes>
           </BrowserRouter>
         </Provider>

@@ -9,23 +9,20 @@ import { fetchAuth } from '../../store/auth'
  */
 
 export function useJwtToken () {
-
   const [isLoading, setIsLoading] = React.useState(true)
-  const jwt = useSelector((state) =>state.auth)
+  const jwt = useSelector((state) => state.auth)
   const authenticatedUser = jwt?.auth ?? null
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const initialEffects =  () => {
+  const initialEffects = () => {
     async function getAuthFromRedux () {
       await dispatch(fetchAuth())
       setIsLoading(false)
-
     }
-    getAuthFromRedux().catch(onerror => {console.error(onerror)})
+    getAuthFromRedux().catch(onerror => { console.error(onerror) })
   }
 
   React.useEffect(initialEffects, [dispatch])
-  return {authenticatedUser, isLoading}
-
+  return { authenticatedUser, isLoading }
 }

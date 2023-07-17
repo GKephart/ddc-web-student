@@ -6,32 +6,32 @@ import { useDispatch } from 'react-redux'
 import { fetchWaitingInvites } from '../../../store/waitingInvites'
 
 export function WaitingInviteApprovalForm (props) {
-  const {inviteId,setInviteApprovalStatus} = props
+  const { inviteId, setInviteApprovalStatus } = props
   const dispatch = useDispatch()
 
   const handleSubmit = (values) => {
-    const inviteAction = {...values, inviteId}
-    httpConfig.post("/apis/sign-up/?class=action", inviteAction)
+    const inviteAction = { ...values, inviteId }
+    httpConfig.post('/apis/sign-up/?class=action', inviteAction)
       .then(reply => {
-        let {message, type, status} = reply
-        setInviteApprovalStatus({message, type})
-        if(status === 200) {
+        const { message, type, status } = reply
+        setInviteApprovalStatus({ message, type })
+        if (status === 200) {
           dispatch(fetchWaitingInvites())
         }
       })
   }
 
   const action = {
-    approved:""
+    approved: ''
   }
 
-  return(
+  return (
     <>
       <Formik
         onSubmit={handleSubmit}
         initialValues={action}
       >
-      {InviteApprovalFormContent}
+        {InviteApprovalFormContent}
       </Formik>
     </>
   )
@@ -41,38 +41,38 @@ function InviteApprovalFormContent (props) {
   const {
     setFieldValue,
     handleBlur,
-    handleSubmit,
+    handleSubmit
 
-  } = props;
+  } = props
 
-  return(
+  return (
     <>
-      <form className="d-inline-flex px-1" onSubmit={handleSubmit}>
-        <label className='sr-only' htmlFor="approveStudent">Approve incoming student</label>
+      <form className='d-inline-flex px-1' onSubmit={handleSubmit}>
+        <label className='sr-only' htmlFor='approveStudent'>Approve incoming student</label>
         <button
           onBlur={handleBlur}
-          className="btn btn-success"
-          value={true}
-          id="approveStudent"
+          className='btn btn-success'
+          value
+          id='approveStudent'
           onClick={() => {
-            setFieldValue("approved", true)
+            setFieldValue('approved', true)
           }}
 
         >
-          <FontAwesomeIcon icon="check"/>
+          <FontAwesomeIcon icon='check' />
         </button>
         &nbsp;
-        <label className='sr-only' htmlFor="denyStudent">Deny incoming student</label>
+        <label className='sr-only' htmlFor='denyStudent'>Deny incoming student</label>
         <button
-          className="btn btn-danger"
+          className='btn btn-danger'
           onBlur={handleBlur}
-          id="denyStudent"
-          value="false"
+          id='denyStudent'
+          value='false'
           onClick={() => {
-            setFieldValue("approved", false)
+            setFieldValue('approved', false)
           }}
         >
-          <FontAwesomeIcon icon="ban"/>
+          <FontAwesomeIcon icon='ban' />
         </button>
       </form>
     </>

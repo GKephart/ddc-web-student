@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { httpConfig } from '../utils/http-config'
 
 const slice = createSlice({
-  name:"processedInvites",
+  name: 'processedInvites',
   initialState: [],
   reducers: {
     setProcessedInvites: (invites, action) => {
@@ -11,10 +11,10 @@ const slice = createSlice({
   }
 })
 
-export const{setProcessedInvites} = slice.actions
+export const { setProcessedInvites } = slice.actions
 
 export const fetchProcessedInvites = () => async (dispatch) => {
-  const {data} = await httpConfig.get("/apis/sign-up/?class=invite&command=processed")
+  const { data } = await httpConfig.get('/apis/sign-up/?class=invite&command=processed')
   dispatch(setProcessedInvites(data))
 }
 

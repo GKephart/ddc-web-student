@@ -362,12 +362,14 @@ class Invite implements \JsonSerializable {
 
         // grab the Invites from mySQL
         $invites = new SplFixedArray($statement->rowCount());
+        $currentIterator = $invites->getIterator();
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         while(($row = $statement->fetch()) !== false) {
             try {
                 $invite = new Invite($row["inviteId"], $row["username"], $row["fullName"], $row["browser"], $row["ip"], $row["createDate"]);
-                $invites[$invites->key()] = $invite;
-                $invites->next();
+
+                $invites[$currentIterator->key()] = $invite;
+                $currentIterator->next();
             } catch(Exception $exception) {
                 throw(new PDOException($exception->getMessage(), 0, $exception));
             }
@@ -392,7 +394,9 @@ INNER JOIN action ON invite.inviteId = action.inviteId";
         // build a map of invites and actions
 
         $processedInvites = new SplFixedArray($statement->rowCount());
+        $currentIterator = $processedInvites->getIterator();
         $statement->setFetchMode(PDO::FETCH_ASSOC);
+        $currentValue = 0;
         while(($row = $statement->fetch()) !== false) {
 
             try {
@@ -402,9 +406,11 @@ INNER JOIN action ON invite.inviteId = action.inviteId";
                     "action" => $action,
                     "invite" => $invite
                 ];
+                $currentValue++;
+                $processedInvites[$currentIterator->key()] = $processedInvite;
 
-                $processedInvites[$processedInvites->key()] = $processedInvite;
-                $processedInvites->next();
+                $currentIterator->next();
+
 
             } catch(Exception $exception) {
                 throw(new PDOException($exception->getMessage(), 0, $exception));
@@ -436,8 +442,9 @@ WHERE actionId IS NULL";
         while(($row = $statement->fetch()) !== false) {
             try {
                 $invite = new Invite($row["inviteId"], $row["username"], $row["fullName"], $row["browser"], $row["ip"], $row["createDate"]);
-                $invites[$invites->key()] = $invite;
-                $invites->next();
+                $currentIterator = $invites->getIterator();
+                $invites[$currentIterator->key()] = $invite;
+                $currentIterator->next();
             } catch(Exception $exception) {
                 throw(new PDOException($exception->getMessage(), 0, $exception));
             }
@@ -450,7 +457,7 @@ WHERE actionId IS NULL";
      *
      * @return array formatted state variables to be JSON encoded
      **/
-    public function jsonSerialize() {
+    public function jsonSerialize(): array {
         $stateVariables = get_object_vars($this);
         $stateVariables["inviteId"] = $this->inviteId;
         $stateVariables["ip"] = inet_ntop($this->ip);
