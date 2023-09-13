@@ -5,6 +5,7 @@ require_once(dirname(__DIR__, 3) . "/php/lib/ad-verify.php");
 require_once(dirname(__DIR__, 3) . "/php/lib/mailer.php");
 require_once(dirname(__DIR__, 3) . "/php/lib/xsrf.php");
 require_once(dirname(__DIR__, 3) . "/php/lib/jwt.php");
+require_once("/etc/nginx/capstone-mysql/Secrets.php");
 
 
 use DdcFullstack\DdcWebStudent\Action;
@@ -181,7 +182,7 @@ try {
         throw(new InvalidArgumentException("invalid class", 400));
     }
 
-} catch (\Exception | TypeError | InvalidArgumentException | RuntimeException | Error $exception) {
+} catch (\Exception | TypeError | InvalidArgumentException | RuntimeException $exception) {
     $reply->status = $exception->getCode();
     $reply->message = $exception->getMessage();
 }
