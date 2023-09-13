@@ -21,12 +21,9 @@ export const SignUpFormContent = (props) => {
         <Form.Group>
           <Form.Label>username</Form.Label>
           <InputGroup className='mb-2'>
-            <InputGroup.Prepend>
               <InputGroup.Text>
                 <FontAwesomeIcon icon='envelope' />
               </InputGroup.Text>
-            </InputGroup.Prepend>
-
             <FormControl
               placeholder=' CNM Username'
               aria-label='Username'
@@ -53,11 +50,10 @@ export const SignUpFormContent = (props) => {
         <Form.Group>
           <Form.Label>Password</Form.Label>
           <InputGroup className='mb-2'>
-            <InputGroup.Prepend>
+
               <InputGroup.Text>
                 <FontAwesomeIcon icon='key' />
               </InputGroup.Text>
-            </InputGroup.Prepend>
             <FormControl
               type='password'
               placeholder='password'
@@ -83,17 +79,15 @@ export const SignUpFormContent = (props) => {
         </Form.Group>
         <div className='form-group'>
           <div className='input-group'>
-            <div className=' form-check'>
               <Form.Check
-                type='checkbox' className='form-check-input' name='toggle' onClick={() => {
+                name='toggle'
+                onClick={() => {
                   setFieldValue('toggle', true)
                 }}
+                label={" By checking this box, I certify that I have signed up for the Deep Dive Coding Fullstack\n" +
+                  "                Bootcamp."}
               />
-              <label className='form-check-label'>
-                By checking this box, I certify that I have signed up for the Deep Dive Coding Fullstack
-                Bootcamp.
-              </label>
-            </div>
+
           </div>
           {
             errors.toggle && touched.toggle && (

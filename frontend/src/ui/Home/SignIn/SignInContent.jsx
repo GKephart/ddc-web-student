@@ -3,6 +3,7 @@ import { Form, FormControl, InputGroup } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export const SignInContent = (props) => {
+
   const {
     status,
     values,
@@ -25,6 +26,7 @@ export const SignInContent = (props) => {
               <FontAwesomeIcon icon='envelope' />
             </InputGroup.Text>
             <FormControl
+              autoComplete={'username' }
               placeholder=' CNM Username'
               aria-label='Username'
               aria-describedby='basic-addon1'
@@ -59,6 +61,7 @@ export const SignInContent = (props) => {
               placeholder='password'
               aria-label='password'
               aria-describedby='basic-addon1'
+              autocomplete={'current-password'}
               name='password'
               onChange={handleChange}
               onBlur={handleBlur}
@@ -87,6 +90,7 @@ export const SignInContent = (props) => {
         >{/* Font Aweosme Goes Here */} &nbsp;Reset
         </button>
       </Form>
+      {status && (<div className={status.type}>{status.message}</div>)}
 
     </>
   )

@@ -406,7 +406,7 @@ INNER JOIN action ON invite.inviteId = action.inviteId";
                     "action" => $action,
                     "invite" => $invite
                 ];
-                $currentValue++;
+
                 $processedInvites[$currentIterator->key()] = $processedInvite;
 
                 $currentIterator->next();
@@ -439,10 +439,10 @@ WHERE actionId IS NULL";
         // build an array of invites
         $invites = new \SplFixedArray($statement->rowCount());
         $statement->setFetchMode(PDO::FETCH_ASSOC);
+        $currentIterator = $invites->getIterator();
         while(($row = $statement->fetch()) !== false) {
             try {
                 $invite = new Invite($row["inviteId"], $row["username"], $row["fullName"], $row["browser"], $row["ip"], $row["createDate"]);
-                $currentIterator = $invites->getIterator();
                 $invites[$currentIterator->key()] = $invite;
                 $currentIterator->next();
             } catch(Exception $exception) {
